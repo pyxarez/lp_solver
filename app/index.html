@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Linear Programming</title>
+	<link rel="stylesheet" href="css/main.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="js/draw.js" defer></script>
+	<script src="js/main.js" defer></script>
+</head>
+<style>
+</style>
+<body>
+	<main>
+		<span>Z(X) = </span> 
+		<input type="text" name="x1" class="input">
+		<span>x<sub>1</sub></span>
+		<span>+</span>
+		<input type="text" name="x2" class="input">
+		<span>x<sub>2</sub></span>
+		<span>&#10139;</span>
+		<select name="" id="" class="select">
+			<option value="max">max</option>
+			<option value="min">min</option>
+		</select>
+		<p>Количество ограничений</p>
+		<select name="eq-amount" class="select">
+			<option value="">2</option>
+			<option value="">3</option>
+			<option value="">4</option>
+			<option value="">5</option>
+		</select>
+		<button onclick="insertTemplate()" class="btn btn__green">Далее</button>
+		<div id="equations"></div>	
+	</main>
+<!-- 	<div class="container">
+		<canvas id="graph" height="500" width="500"></canvas>
+	</div>
+ --></body>
+</html>
