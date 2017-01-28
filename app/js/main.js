@@ -4,8 +4,6 @@ let template =
 <select><option value="">≤</option> \
 <option value="">=</option><option value="">≥</option></select><input type="text" class="input input_wide"/><br/>';
 
-let 
-
 function insertTemplate(times) {
 	for (let i = 0; i < times; i++) {
 		equations.innerHTML += template; 

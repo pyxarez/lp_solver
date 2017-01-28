@@ -45,15 +45,31 @@ let valuesOfTargetFunction = [];
  }
 
 /**
- * Вычисляет значение х1 для состемы уравнений
+ * Вычисляет значение х1 для состемы уравнений на основе х2
  *
  * @param {object} con1 первое уравнение(ограничение).
  * @param {object} con2 второе уравнение(ограничение).
  * @param {number} значение переменной х2 для системы уравнений.
  * @return {number} x1 значение переменной х1.
  */
- function computeX1(con1, con2, x2) {
+ function computeX1(con1, x2) {
  	let x1 = (con1.value - con1.x2 * x2) / con1.x1; 
 
  	return x1; 
  }
+
+/**
+ * Вычилсяет х2 при известном х1, нужно для просчёта пересечений с осью х2(вертикальной) 
+ *
+ * @param {} .
+ * @param {} .
+ * @param {} .
+ * @return {number} .
+ */
+
+function computeX2ByX1(con1, x1) {
+  let x2 =  
+}
+
+
+/*  Тестоввые */
