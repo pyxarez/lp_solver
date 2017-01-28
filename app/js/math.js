@@ -1,11 +1,3 @@
-// Массив ограничений (уравнений системы ограничения)
-let equations = [];
-
-// /* 
-// 	* Массив значений целевой функции 
-// */
-// let valuesOfTargetFunction = [];
-
 /* 
   * Целевая функция
 */
@@ -131,6 +123,7 @@ function checkBelongingTo(con, x1, x2) {
  * Первый условный оператор - ось х1, т.е. х1 = 0 и ограничение
  * Второй условный оператор - ось х2, т.е. х2 = 0 и ограничение
  * Третий условный оператор - ограничение и ограничение
+ * Четвёртый условный оператор - ось и ось
  *
  * @param {object} con1 ограничение 1.
  * @param {object} con2 ограничение 2.
@@ -139,6 +132,12 @@ function checkBelongingTo(con, x1, x2) {
 function getX1AndX2(con1, con2) {
   let values = [];
   let x1, x2;
+
+  if (con1.x1 == 1 && con1.value == 0 || con1.x2 == 1 && con1.value == 0) {
+    let temp = con1;
+    con1 = con2;
+    con2 = temp;
+  }
 
   if (con2.x1 == 1 && con2.value == 0 && con2.x2 == 1 && con2.value == 0) {
     x1 = 0;
@@ -200,12 +199,32 @@ function fillBounds(eqs) {
   return bounds;
 }
 
+/**
+ * Функция подготавливает точки для построения графика
+ *
+ * @param {} .
+ * @param {} .
+ * @param {} .
+ * @return {number} .
+ */
+
 
 
 /*  Тестовая инициализация  */
 
+/* 
+ * Массив значений целевой функции 
+*/
+let valuesOfTargetFunction = [];
+
+// Массив ограничений (уравнений системы ограничения)
+let equations = [];
+
 equations.push(new Equation(3, 4, "<=", 1700));
 equations.push(new Equation(12, 30, "<=", 9600));
+// equations.push(new Equation(0.2, 0.3, "<=", 1.8));
+// equations.push(new Equation(0.2, 0.1, "<=", 1.2));
+// equations.push(new Equation(0.3, 0.3, "<=", 2.4));
 equations.push(new Equation(1, 0, ">=", 0));
 equations.push(new Equation(0, 1, ">=", 0));
 
@@ -213,6 +232,8 @@ targetFunction.init(2, 4);
 
 let bounds = fillBounds(equations);
 console.log(bounds);
+
+
 
 
 
