@@ -12,27 +12,7 @@ function insertTemplate(times) {
 
 /* Initialization */
 
-let targetFunction = {
-	x1: null,
-	x2: null,
-
-	/**
-   * Метод для подсчёта значения целевой функции
-   *
-   * @param {number} х1 значение х1.
-   * @param {number} х2 значение х2.
-   * @return {number} значение целевой функции при данных х1 и х2.
-   */
-
-  calculate: function(x1, x2) {
-    return this.x1 * x1 + this.x2 * x2; 
-  },
-
-  init: function(x1, x2) {
-  	this.x1 = x1;
-  	this.x2 = x2;
-  }
-};
+//...........................
 
 // тестовая отрисовка
 
