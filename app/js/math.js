@@ -65,7 +65,7 @@ class Graph {
  */
  function computeX2(con1, con2) {
  	let number = con1.value - (con2.value * con1.x1 / con2.x1);
-  // console.log(number);
+  
  	let x2 = number * con2.x1 / (-con2.x2 * con1.x1 + con2.x1 * con1.x2); 
 
  	return x2; 
@@ -106,7 +106,7 @@ function computeX2ByX1(con1, x1) {
  * @return {boolean} возращается результат проверки на принадлежность к одр для ограниченния.
  */
 function checkBelongingTo(con, x1, x2) {
-  let computedValue = con.x1 * x1 + con.x2 * x2
+  let computedValue = con.x1 * x1 + con.x2 * x2;
 
   let signs = {
     "<=" : function(con, x1, x2) {
@@ -167,6 +167,7 @@ return values;
  * Заполняет Map точками, подходящими под наш ОДР
  *
  * @param {object} eqs массив ограничений нашей задачи.
+ * @return {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
  */
 function fillBounds(eqs) {
   /* 
@@ -175,21 +176,23 @@ function fillBounds(eqs) {
   let bounds = new Map();
   let zeroPoint = [0, 0];
 
-  for (let i = 0, l = eqs.length - 1; i < l; i++) {
+  for (let i = 0, l = eqs.length; i < l; i++) {
 
     bounds.set(eqs[i], new Map());
 
-    for (let j = i + 1; j < eqs.length; j++) {
-      let doesBelong = null;      
-      let {x1, x2} = getX1AndX2(eqs[i], eqs[j]);
+    outer:
+    for (let j = 0; j < eqs.length; j++) {
+      if (j == i) continue;
+
+      let [x1, x2] = getX1AndX2(eqs[i], eqs[j]);
 
       for (let h = 0; h < eqs.length; h++) {
-        doesBelong = checkBelongingTo(eqs[h], x1, x2);
-      }
+        if (j == h || i == h) continue;
 
-      if (doesBelong) {
-        bounds[eqs[i]].set(eqs[j], {x1: x1, x2: x2});
+        if (!checkBelongingTo(eqs[h], x1, x2)) continue outer;
       }
+      
+      bounds.get(eqs[i]).set(eqs[j], {x1: x1, x2: x2});      
     }
 
   }
@@ -203,19 +206,13 @@ function fillBounds(eqs) {
 
 equations.push(new Equation(3, 4, "<=", 1700));
 equations.push(new Equation(12, 30, "<=", 9600));
-equations.push(new Equation(1, 0, "=", 0));
-equations.push(new Equation(0, 1, "=", 0));
+equations.push(new Equation(1, 0, ">=", 0));
+equations.push(new Equation(0, 1, ">=", 0));
 
 targetFunction.init(2, 4);
 
-
-
-
-// console.log(computeX2(equations[0], equations[2]));
-
 let bounds = fillBounds(equations);
 console.log(bounds);
-
 
 
 
