@@ -130,19 +130,21 @@ function checkBelongingTo(con, x1, x2) {
  * 
  * Первый условный оператор - ось х1, т.е. х1 = 0 и ограничение
  * Второй условный оператор - ось х2, т.е. х2 = 0 и ограничение
- * 
+ * Третий условный оператор - ограничение и ограничение
  *
  * @param {object} con1 ограничение 1.
  * @param {object} con2 ограничение 2.
  * @return {array} значения х1 и х2 при заданных ограничениях.
  */
-
-
 function getX1AndX2(con1, con2) {
   let values = [];
   let x1, x2;
 
-  if (con2.x1 == 1 && con2.value == 0) {
+  if (con2.x1 == 1 && con2.value == 0 && con2.x2 == 1 && con2.value == 0) {
+    x1 = 0;
+    x2 = 0;
+
+  } else if (con2.x1 == 1 && con2.value == 0) {
     x1 = con2.value;
     x2 = computeX2ByX1(con1, x1);
 
@@ -152,7 +154,6 @@ function getX1AndX2(con1, con2) {
 
   } else {
     x2 = computeX2(con1, con2);
-    console.log(x2);
     x1 = computeX1(con1, x2);
   }
 
@@ -161,7 +162,6 @@ function getX1AndX2(con1, con2) {
 
 return values;
 }
-
 
 /**
  * Заполняет Map точками, подходящими под наш ОДР
@@ -173,28 +173,15 @@ function fillBounds(eqs) {
     * Объект, хранящий выражения и точки пересечения с другими объектами графика
   */
   let bounds = new Map();
+  let zeroPoint = [0, 0];
 
-  for (let i = 0, l = eqs.length - 2; i < l; i++) {
+  for (let i = 0, l = eqs.length - 1; i < l; i++) {
 
     bounds.set(eqs[i], new Map());
 
     for (let j = i + 1; j < eqs.length; j++) {
       let doesBelong = null;      
       let {x1, x2} = getX1AndX2(eqs[i], eqs[j]);
-
-
-      // if (j == eqs.length - 2) {
-      //   x1 = eqs[j].value;
-      //   x2 = computeX2ByX1(eqs[i], eqs[j].value);
-
-      // } else if (j == eqs.length - 1) {
-      //   x2 = eqs[j].value;
-      //   x1 = computeX1(eqs[i], eqs[j].value);
-        
-      // } else {
-      //   x2 = computeX2(eqs[i], eqs[j]);
-      //   x1 = computeX1(eqs[i], x2);
-      // }
 
       for (let h = 0; h < eqs.length; h++) {
         doesBelong = checkBelongingTo(eqs[h], x1, x2);
@@ -204,11 +191,10 @@ function fillBounds(eqs) {
         bounds[eqs[i]].set(eqs[j], {x1: x1, x2: x2});
       }
     }
+
   }
 
-
-
-
+  return bounds;
 }
 
 
@@ -222,9 +208,13 @@ equations.push(new Equation(0, 1, "=", 0));
 
 targetFunction.init(2, 4);
 
+
+
+
 // console.log(computeX2(equations[0], equations[2]));
 
-// fillBounds(equations);
+let bounds = fillBounds(equations);
+console.log(bounds);
 
 
 
