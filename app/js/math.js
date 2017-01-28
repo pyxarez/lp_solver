@@ -125,12 +125,33 @@ function checkBelongingTo(con, x1, x2) {
 }
 
 /**
+ * Функция вычисления х1 и х2
+ *
+ * @param {object} con1 ограничение 1.
+ * @param {object} con2 ограничение 2.
+ * @return {array} значения х1 и х2 при заданных ограничениях.
+ */
+
+
+function getX1AndX2(con1, con2) {
+  let values = [];
+  if (con2.x1 = 1 && con2.value == 0) {
+    value.push(eqs[j].value);
+    value.push(computeX2ByX1(eqs[i], eqs[j].value));
+  } else if (con2.x2 == 1 && con2.value == 0) {
+    value.push(eqs[j].value);
+    value.push(computeX2ByX1(eqs[i], eqs[j].value));
+  } else {
+    value.push(eqs[j].value);
+    value.push(computeX2ByX1(eqs[i], eqs[j].value));
+  }
+}
+
+
+/**
  * Заполняет Map точками, подходящими под наш ОДР
  *
- * @param {} .
- * @param {} .
- * @param {} .
- * @return {number} .
+ * @param {object} eqs массив ограничений нашей задачи.
  */
 function fillBounds(eqs) {
   /* 
@@ -138,24 +159,45 @@ function fillBounds(eqs) {
   */
   let bounds = new Map();
 
-  for (let i = 0, l = eqs.length - 1; i < l; i++) {
+  for (let i = 0, l = eqs.length - 2; i < l; i++) {
+
+    bounds.set(eqs[i], new Map());
 
     for (let j = i + 1; j < eqs.length; j++) {
+      let doesBelong = null;      
+      let x1, x2;
 
+      // if (j == eqs.length - 2) {
+      //   x1 = eqs[j].value;
+      //   x2 = computeX2ByX1(eqs[i], eqs[j].value);
 
-      let x2 = computeX2(eqs[i], eqs[j]);
-      let x1 = computeX1(eqs[i], x2);
-
-      let doesBelong = null;
+      // } else if (j == eqs.length - 1) {
+      //   x2 = eqs[j].value;
+      //   x1 = computeX1(eqs[i], eqs[j].value);
+        
+      // } else {
+      //   x2 = computeX2(eqs[i], eqs[j]);
+      //   x1 = computeX1(eqs[i], x2);
+      // }
 
       for (let h = 0; h < eqs.length; h++) {
         doesBelong = checkBelongingTo(eqs[h], x1, x2);
       }
+
+      if (doesBelong) {
+        bounds[eqs[i]].set(eqs[j], {x1: x1, x2: x2});
+      }
+
     }
+
   }
 
-  
+
+
+
 }
+
+
 
 /*  Тестовая инициализация  */
 
