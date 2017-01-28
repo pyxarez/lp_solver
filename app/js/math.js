@@ -235,14 +235,56 @@ function checkInfinite(bounds) {
  * @return {number} .
  */
 function getPoints(bounds) {
-  let points = new Set();
+  let points = [];
+  let maps = [];
 
-  for (let eq of bounds.values()) {
-    for (let point of eq.values()) {
-      points.add(point);
-    }
-
+  for (let eq of bounds) {
+    maps.push(eq);
   }
+  console.log(maps[0]);
+  chainPoints(points, maps[0], bounds);
+
+  return points;
+}
+
+/**
+ * Рекурсивная функция, создающая правильную последовательнось точек для отрисовки
+ *
+ * @param {} .
+ * @param {} .
+ * @param {} .
+ * @return {number} .
+ */
+
+function chainPoints(chain, eq, bounds) {
+  let point = eq[1];
+
+  
+  for (let coords of point) {
+
+    if (!(~chain.indexOf(coords[1]))) {
+      let trigger = false;
+
+      chain.forEach((point) => {
+        if (point.x1 == coords[1].x1 && point.x2 == coords[1].x2) {
+          trigger = true;
+        }
+      });
+
+      if (!trigger) {
+        chain.push(coords[1]);
+        console.log(bounds.get(coords[0]));
+
+        for (let bound of bounds) {
+          if (bound[0] == coords[0]) {
+            chainPoints(chain, bound, bounds)          
+          }
+        }
+
+      }    
+
+    }   
+  }  
 }
 
 /**
@@ -271,6 +313,9 @@ targetFunction.init(2, 4);
 
 let bounds = fillBounds(equations);
 console.log(bounds);
+
+let points = getPoints(bounds); 
+console.log(points);
 
 
 
