@@ -125,7 +125,11 @@ function checkBelongingTo(con, x1, x2) {
 }
 
 /**
- * Функция вычисления х1 и х2
+ * Функция вычисления х1 и х2, решает какой тип системы уравнений(пряма и ось х1, прямая и прямая, ось х2) и выполняет соответсвующие дествие
+ * 
+ * Первый условный оператор - ось х1, т.е. х1 = 0 и ограничение
+ * Второй условный оператор - ось х2, т.е. х2 = 0 и ограничение
+ * 
  *
  * @param {object} con1 ограничение 1.
  * @param {object} con2 ограничение 2.
@@ -135,16 +139,24 @@ function checkBelongingTo(con, x1, x2) {
 
 function getX1AndX2(con1, con2) {
   let values = [];
+  let x1, x2;
+
   if (con2.x1 = 1 && con2.value == 0) {
-    value.push(eqs[j].value);
-    value.push(computeX2ByX1(eqs[i], eqs[j].value));
+    x1 = con2.value;
+    x2 = computeX2ByX1(con1, x1);
+
   } else if (con2.x2 == 1 && con2.value == 0) {
-    value.push(eqs[j].value);
-    value.push(computeX2ByX1(eqs[i], eqs[j].value));
+    x2 = con2.value;
+    x1 = computeX1(con1, x2);
+
   } else {
-    value.push(eqs[j].value);
-    value.push(computeX2ByX1(eqs[i], eqs[j].value));
+    x2 = computeX2(con1, con2);
+    x1 = computeX1(con1, x2);
   }
+
+  values.push(x1, x2);
+
+return values;
 }
 
 
@@ -165,7 +177,8 @@ function fillBounds(eqs) {
 
     for (let j = i + 1; j < eqs.length; j++) {
       let doesBelong = null;      
-      let x1, x2;
+      let {x1, x2} = getX1AndX2(eqs[i], eqs[j]);
+
 
       // if (j == eqs.length - 2) {
       //   x1 = eqs[j].value;
@@ -187,9 +200,7 @@ function fillBounds(eqs) {
       if (doesBelong) {
         bounds[eqs[i]].set(eqs[j], {x1: x1, x2: x2});
       }
-
     }
-
   }
 
 
