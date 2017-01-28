@@ -1,3 +1,13 @@
+/** 
+ * Массив значений целевой функции 
+ */
+let valuesOfTargetFunction = [];
+
+/** Массив ограничений (уравнений системы ограничения)
+ *
+ */
+let equations = [];
+
 /* 
   * Целевая функция
 */
@@ -200,6 +210,23 @@ function fillBounds(eqs) {
 }
 
 /**
+ * Функция проверки ОДР на ограниченность
+ *
+ * @param {Map} все точки пересечения, на ОДР.
+ */
+function checkInfinite(bounds) {
+  for (let eq of bounds.values()) {
+    let counter = 0;
+
+    for (let point of eq.values()) {
+      counter++;      
+    }
+
+    if (counter != 2) throw new Error("ОДР не ограничена");
+  }
+}
+
+/**
  * Функция подготавливает точки для построения графика
  *
  * @param {} .
@@ -207,18 +234,30 @@ function fillBounds(eqs) {
  * @param {} .
  * @return {number} .
  */
+function getPoints(bounds) {
+  let points = new Set();
 
+  for (let eq of bounds.values()) {
+    for (let point of eq.values()) {
+      points.add(point);
+    }
 
+  }
+}
+
+/**
+ * Функция поиска максимального значения
+ *
+ * @param {} .
+ * @param {} .
+ * @param {} .
+ * @return {number} .
+ */
 
 /*  Тестовая инициализация  */
 
-/* 
- * Массив значений целевой функции 
-*/
-let valuesOfTargetFunction = [];
 
-// Массив ограничений (уравнений системы ограничения)
-let equations = [];
+
 
 equations.push(new Equation(3, 4, "<=", 1700));
 equations.push(new Equation(12, 30, "<=", 9600));
