@@ -65,6 +65,7 @@ class Graph {
  */
  function computeX2(con1, con2) {
  	let number = con1.value - (con2.value * con1.x1 / con2.x1);
+  // console.log(number);
  	let x2 = number * con2.x1 / (-con2.x2 * con1.x1 + con2.x1 * con1.x2); 
 
  	return x2; 
@@ -141,7 +142,7 @@ function getX1AndX2(con1, con2) {
   let values = [];
   let x1, x2;
 
-  if (con2.x1 = 1 && con2.value == 0) {
+  if (con2.x1 == 1 && con2.value == 0) {
     x1 = con2.value;
     x2 = computeX2ByX1(con1, x1);
 
@@ -151,10 +152,12 @@ function getX1AndX2(con1, con2) {
 
   } else {
     x2 = computeX2(con1, con2);
+    console.log(x2);
     x1 = computeX1(con1, x2);
   }
 
-  values.push(x1, x2);
+  values.push(x1);
+  values.push(x2);
 
 return values;
 }
@@ -219,7 +222,7 @@ equations.push(new Equation(0, 1, "=", 0));
 
 targetFunction.init(2, 4);
 
-console.log(computeX2(equations[0], equations[2]));
+// console.log(computeX2(equations[0], equations[2]));
 
 // fillBounds(equations);
 
