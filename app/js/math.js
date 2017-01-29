@@ -139,24 +139,26 @@ function getX1AndX2(con1, con2) {
   let values = [];
   let x1, x2;
 
+  // Если первый аргумент ограничение оси, то меняем его со вторым аргументом,
+  // удобно для для того, чтобы не менять
+  // логику счёта х1 и х2 
   if (con1.x1 == 1 && con1.value == 0 || con1.x2 == 1 && con1.value == 0) {
     let temp = con1;
     con1 = con2;
     con2 = temp;
   }
 
-  if (con2.x1 == 1 && con2.value == 0 && con2.x2 == 1 && con2.value == 0) {
-    x1 = 0;
-    x2 = 0;
-
-  } else if (con2.x1 == 1 && con2.value == 0) {
+  // Если второе ограничение уравнение оси х2 
+  if (con2.x1 == 1 && con2.value == 0) {
     x1 = con2.value;
     x2 = computeX2ByX1(con1, x1);
 
+  // Если второе ограничение уравнение оси х1
   } else if (con2.x2 == 1 && con2.value == 0) {
     x2 = con2.value;
     x1 = computeX1(con1, x2);
 
+  // Если оба ограничения уравнения прямых
   } else {
     x2 = computeX2(con1, con2);
     x1 = computeX1(con1, x2);
