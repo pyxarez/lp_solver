@@ -9,7 +9,7 @@ let equations = [];
 let targetFunction = {
   x1: null,
   x2: null,
-  extrem: "max",
+  extreme: "max",
 
   /**
    * Метод для подсчёта значения целевой функции
@@ -28,7 +28,6 @@ let targetFunction = {
     this.extreme = extreme;
   }
 };
-
 
 class Equation {
   constructor(x1, x2, sign, value) {
@@ -299,27 +298,27 @@ function getValues(points) {
  * Функция вычисления экстремума целевой функции
  *
  * @param {array} points все наши точки пересечения для закрашивания ОДР.
- * @param {string} extremSign знак целевой функции.
+ * @param {string} extremeSign знак целевой функции.
  * @return {Iterator} value содержит экстремум целевой функции и х1 и х2 при нём.
  */
 function getExtrem(points, extremSign) {
   let vForP = getValues(points);
 
   let values = [],
-      extrem;
+      extreme;
 
   for (let value of vForP.values()) {
       values.push(value);
   }
 
   if (extremSign === "max") {    
-    extrem = Math.max(...values);
+    extreme = Math.max(...values);
   } else {
-    extrem = Math.min(...values);
+    extreme = Math.min(...values);
   }
 
   for (let value of vForP) {
-    if (value[1] === extrem) {
+    if (value[1] === extreme) {
       return value;     
     }
   }
@@ -365,14 +364,14 @@ let bounds = fillBounds(equations);
 
 
 //последовательные точки пересечений для отрисовки
-let points, extrem;
+let points, extreme;
 
 //находим экстремум, если возможно
 if (!checkInfinite(bounds)) {
   points = getPoints(bounds); 
 
-  extrem = getExtrem(points, targetFunction.extreme);
-  console.log(extrem);
+  extreme = getExtrem(points, targetFunction.extreme);
+  console.log(extreme);
 } else {
   points = getPoints(bounds); 
   if (targetFunction.extreme === "max") {
