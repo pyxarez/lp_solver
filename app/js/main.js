@@ -16,9 +16,9 @@ function insertTemplate(times) {
 
 // тестовая отрисовка
 
-drawLine([{x1:0, x2: 1700/4}, {x1: 1700/3, x2: 0}]);
+drawLine([{x1:0, x2: 1700/4}, {x1: 1700/4, x2: 0}]);
 
-drawLine([{x1:0, x2: 9600/30}, {x1: 9600/12, x2: 0}]);
+drawLine([{x1:0, x2: 9600/30}, {x1: 9600/20, x2: 0}]);
 
 // level line
 drawLine([{x1:0, x2: 200}, {x1: 400, x2: 0}]);

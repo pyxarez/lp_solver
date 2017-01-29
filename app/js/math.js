@@ -142,19 +142,23 @@ function getX1AndX2(con1, con2) {
   // Если первый аргумент ограничение оси, то меняем его со вторым аргументом,
   // удобно для для того, чтобы не менять
   // логику счёта х1 и х2 
-  if (con1.x1 == 1 && con1.value == 0 || con1.x2 == 1 && con1.value == 0) {
+  if (con1.x1 == 1 && con1.value == 0 ||
+      con1.x2 == 1 && con1.value == 0 ||
+      con1.x1 == 1 && con1.value == 500 ||
+      con1.x2 == 1 && con1.value == 500) 
+  {
     let temp = con1;
     con1 = con2;
     con2 = temp;
   }
 
   // Если второе ограничение уравнение оси х2 
-  if (con2.x1 == 1 && con2.value == 0) {
+  if (con2.x1 == 1 && con2.value == 0 || con2.x1 == 1 && con2.value == 500) {
     x1 = con2.value;
     x2 = computeX2ByX1(con1, x1);
 
   // Если второе ограничение уравнение оси х1
-  } else if (con2.x2 == 1 && con2.value == 0) {
+  } else if (con2.x2 == 1 && con2.value == 0 || con2.x2 == 1 && con2.value == 500) {
     x2 = con2.value;
     x1 = computeX1(con1, x2);
 
@@ -166,7 +170,7 @@ function getX1AndX2(con1, con2) {
 
   values.push(x1);
   values.push(x2);
-
+// 
 return values;
 }
 
@@ -347,39 +351,46 @@ function makePaintable(points, graph) {
 }
 //не закончена
 
+
+
+
+
 /*  Тестовая инициализация  */
 
-equations.push(new Equation(3, 4, "<=", 1700));
-equations.push(new Equation(12, 30, "<=", 9600));
-// equations.push(new Equation(0.2, 0.3, "<=", 1.8));
+equations.push(new Equation(4, 4, ">=", 1700));
+equations.push(new Equation(20, 30, ">=", 9600));
+// equations.push(new Equation(0.2, 0.3, "<=", 1.8)); Мои ограничения
 // equations.push(new Equation(0.2, 0.1, "<=", 1.2));
-// equations.push(new Equation(0.3, 0.3, "<=", 2.4));
+// equations.push(new Equation(0.3, 0.3, "<=", 2.4)); ***************
 equations.push(new Equation(1, 0, ">=", 0));
 equations.push(new Equation(0, 1, ">=", 0));
 
 targetFunction.init(2, 4, "max");
 
-//получаем Map линий и их пересечений
+
+//получаем Map линий и их пересечений  
 let bounds = fillBounds(equations);
-
-
-
 
 //последовательные точки пересечений для отрисовки
 let points, extreme;
 
 //находим экстремум, если возможно
 if (!checkInfinite(bounds)) {
-  points = getPoints(bounds); 
-
+  points = getPoints(bounds);
   extreme = getExtreme(points, targetFunction.extreme);
-  console.log(extreme);
-} else {
+  console.log(extreme);  
+
+} else {  
+  equations.push(new Equation(1, 0, "<=", 500)); 
+  equations.push(new Equation(0, 1, "<=", 500));
+
+  bounds = fillBounds(equations);
+
   points = getPoints(bounds); 
   if (targetFunction.extreme === "max") {
     alert("Максимальное значение ОДР не существует, ввиду её неограниченности");  
   } else {
-
+    extreme = getExtreme(points, targetFunction.extreme);
   }
 }
 
