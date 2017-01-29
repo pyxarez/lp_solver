@@ -359,38 +359,41 @@ function makePaintable(points, graph) {
 
 equations.push(new Equation(4, 4, ">=", 1700));
 equations.push(new Equation(20, 30, ">=", 9600));
-// equations.push(new Equation(0.2, 0.3, "<=", 1.8)); Мои ограничения
+// equations.push(new Equation(0.2, 0.3, "<=", 1.8)); 
 // equations.push(new Equation(0.2, 0.1, "<=", 1.2));
-// equations.push(new Equation(0.3, 0.3, "<=", 2.4)); ***************
+// equations.push(new Equation(0.3, 0.3, "<=", 2.4)); 
 equations.push(new Equation(1, 0, ">=", 0));
 equations.push(new Equation(0, 1, ">=", 0));
 
-targetFunction.init(2, 4, "max");
+targetFunction.init(2, 4, "min");
 
 
 //получаем Map линий и их пересечений  
 let bounds = fillBounds(equations);
 
 //последовательные точки пересечений для отрисовки
-let points, extreme;
+let points = getPoints(bounds), extreme;
 
 //находим экстремум, если возможно
 if (!checkInfinite(bounds)) {
-  points = getPoints(bounds);
   extreme = getExtreme(points, targetFunction.extreme);
-  console.log(extreme);  
+  console.log(extreme); 
+
+  bounds = fillBounds(normalizedEqs);
+  points = getPoints(bounds);
 
 } else {  
-  equations.push(new Equation(1, 0, "<=", 500)); 
-  equations.push(new Equation(0, 1, "<=", 500));
+  normalizedEqs.push(new Equation(1, 0, "<=", 500)); 
+  normalizedEqs.push(new Equation(0, 1, "<=", 500));
 
-  bounds = fillBounds(equations);
-
+  bounds = fillBounds(normalizedEqs);
   points = getPoints(bounds); 
+  
   if (targetFunction.extreme === "max") {
     alert("Максимальное значение ОДР не существует, ввиду её неограниченности");  
   } else {
     extreme = getExtreme(points, targetFunction.extreme);
+    console.log(extreme);  
   }
 }
 
