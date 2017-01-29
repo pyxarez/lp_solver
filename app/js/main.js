@@ -23,6 +23,6 @@ drawLine([{x1:0, x2: 9600/30}, {x1: 9600/12, x2: 0}]);
 // level line
 drawLine([{x1:0, x2: 200}, {x1: 400, x2: 0}]);
 
-fillArea([{x1: 0, x2: 0}, {x1: 0, x2: 320}, {x1: 300, x2: 200}, {x1: 1700/3, x2: 0}]);
+fillArea(points);
 
 drawVector(20, 40);

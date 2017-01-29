@@ -1,8 +1,3 @@
-/** 
- * Массив значений целевой функции 
- */
-let valuesOfTargetFunction = [];
-
 /** Массив ограничений (уравнений системы ограничения)
  *
  */
@@ -14,6 +9,7 @@ let equations = [];
 let targetFunction = {
   x1: null,
   x2: null,
+  extrem: ">=",
 
   /**
    * Метод для подсчёта значения целевой функции
@@ -26,9 +22,10 @@ let targetFunction = {
     return this.x1 * x1 + this.x2 * x2; 
   },
 
-  init: function(x1, x2) {
+  init: function(x1, x2, extrem) {
     this.x1 = x1;
     this.x2 = x2;
+    this.extrem = extrem;
   }
 };
 
@@ -173,7 +170,7 @@ return values;
 }
 
 /**
- * Заполняет Map точками, подходящими под наш ОДР
+ * Заполняет Map точками пересечений, подходящими под наш ОДР
  *
  * @param {object} eqs массив ограничений нашей задачи.
  * @return {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
@@ -222,7 +219,7 @@ function checkInfinite(bounds) {
       counter++;      
     }
 
-    if (counter != 2) throw new Error("ОДР не ограничена");
+    if (counter != 2) return true;
   }
 }
 
@@ -239,6 +236,7 @@ function getPoints(bounds) {
   for (let eq of bounds) {
     maps.push(eq);
   }
+
   console.log(maps[0]);
   chainPoints(points, maps[0], bounds);
 
@@ -246,7 +244,7 @@ function getPoints(bounds) {
 }
 
 /**
- * Рекурсивное заполнение массива объектами, содержащими точки для закрашивания ОДР, каждая из ктороых расположена в правильной последовательности
+ * Рекурсивное заполнение массива объектами, содержащими точки для закрашивания ОДР, каждая из которых расположена в правильном порядке
  *
  * @param {array} chain массив объектов, содержащиъ координаты точек.
  * @param {Map} eq объект типа Map, содержащий выражение(ограничение, линию) и точки пересечения с другими линиями, подходящими под ОДР.
@@ -254,7 +252,6 @@ function getPoints(bounds) {
  */
 function chainPoints(chain, eq, bounds) {
   let point = eq[1];
-
   
   for (let coords of point) {
 
@@ -269,7 +266,6 @@ function chainPoints(chain, eq, bounds) {
 
       if (!trigger) {
         chain.push(coords[1]);
-        console.log(bounds.get(coords[0]));
 
         for (let bound of bounds) {
           if (bound[0] == coords[0]) {
@@ -281,6 +277,56 @@ function chainPoints(chain, eq, bounds) {
   }  
 }
 
+
+/**
+ * Функция получения массива значений целевой функции
+ *
+ * @param {array} points точки пересечения, подходящие под ОДР.
+ * @return {array} значения целевой функции при заданных х1 и х2.
+ */
+function getValues(points) {
+  let valuesForPoint = new Map();
+
+  points.forEach((point) => {
+    let value = targetFunction.calculate(point.x1, point.x2);
+
+    valuesForPoint.set(point, value);
+  });
+
+  return valuesForPoint;
+}
+
+/**
+ * Функция вычисления экстремума целевой функции
+ *
+ * @param {array} points все наши точки пересечения для закрашивания ОДР.
+ * @param {string} extremSign знак целевой функции.
+ * @return {Iterator} value содержит экстремум целевой функции и х1 и х2 при нём.
+ */
+function getExtrem(points, extremSign) {
+  let vForP = getValues(points);
+
+  let values = [];
+  let extrem;
+
+  for (let value of vForP.values()) {
+      values.push(value);
+  }
+
+  if (extremSign === ">=") {    
+    extrem = Math.max(...values);
+  } else {
+    extrem = Math.min(...values);
+  }
+
+  for (let value of vForP) {
+    if (value[1] === extrem) return value;     
+  }
+}
+
+
+
+
 /*  Тестовая инициализация  */
 
 equations.push(new Equation(3, 4, "<=", 1700));
@@ -291,13 +337,24 @@ equations.push(new Equation(12, 30, "<=", 9600));
 equations.push(new Equation(1, 0, ">=", 0));
 equations.push(new Equation(0, 1, ">=", 0));
 
-targetFunction.init(2, 4);
+targetFunction.init(2, 4, ">=");
 
+//получаем Map линий и их пересечений
 let bounds = fillBounds(equations);
 console.log(bounds);
 
-let points = getPoints(bounds); 
-console.log(points);
+let points;
+
+if (!checkInfinite(bounds)) {
+  points = getPoints(bounds); 
+  console.log(points);
+
+  let extrem = getExtrem(points, targetFunction.extrem);
+  console.log(extrem);
+} else {
+
+}
+
 
 
 
