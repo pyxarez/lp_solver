@@ -22,10 +22,10 @@ let targetFunction = {
     return this.x1 * x1 + this.x2 * x2; 
   },
 
-  init: function(x1, x2, extrem) {
+  init: function(x1, x2, extreme) {
     this.x1 = x1;
     this.x2 = x2;
-    this.extrem = extrem;
+    this.extreme = extreme;
   }
 };
 
@@ -306,8 +306,8 @@ function getValues(points) {
 function getExtrem(points, extremSign) {
   let vForP = getValues(points);
 
-  let values = [];
-  let extrem;
+  let values = [],
+      extrem;
 
   for (let value of vForP.values()) {
       values.push(value);
@@ -320,12 +320,32 @@ function getExtrem(points, extremSign) {
   }
 
   for (let value of vForP) {
-    if (value[1] === extrem) return value;     
+    if (value[1] === extrem) {
+      return value;     
+    }
   }
 }
 
+/**
+ * Функция получает значения всех точек на нашем графе и преобразует их для отрисовки
+ *
+ * @param {} .
+ * @param {} .
+ * @param {} .
+ * @return {number} .
+ */
+function makePaintable(points, graph) {
+  let allPointsOnTheScreen = [];
 
+  points.forEach((point) => {
+    allPointsOnTheScreen.push(point.x1, point.x2);
+  });
 
+  for (let key in graph) {
+    allPointsOnTheScreen.push(graph[key])
+  }
+}
+//не закончена
 
 /*  Тестовая инициализация  */
 
@@ -342,16 +362,25 @@ targetFunction.init(2, 4, ">=");
 //получаем Map линий и их пересечений
 let bounds = fillBounds(equations);
 
+
+
+
 //последовательные точки пересечений для отрисовки
 let points, extrem;
 
-if (!checkInfinite(bounds) || targetFunction.extremSign === "<=") {
+//находим экстремум, если возможно
+if (!checkInfinite(bounds)) {
   points = getPoints(bounds); 
 
-  extrem = getExtrem(points, targetFunction.extrem);
+  extrem = getExtrem(points, targetFunction.extreme);
   console.log(extrem);
 } else {
-  alert("Максимальное значение ОДР не существует, ввиду её неограниченности");  
+  points = getPoints(bounds); 
+  if (targetFunction.extreme === "max") {
+    alert("Максимальное значение ОДР не существует, ввиду её неограниченности");  
+  } else {
+
+  }
 }
 
 
