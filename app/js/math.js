@@ -301,7 +301,7 @@ function getValues(points) {
  * @param {string} extremeSign знак целевой функции.
  * @return {Iterator} value содержит экстремум целевой функции и х1 и х2 при нём.
  */
-function getExtrem(points, extremSign) {
+function getExtreme(points, extremSign) {
   let vForP = getValues(points);
 
   let values = [],
@@ -370,7 +370,7 @@ let points, extreme;
 if (!checkInfinite(bounds)) {
   points = getPoints(bounds); 
 
-  extreme = getExtrem(points, targetFunction.extreme);
+  extreme = getExtreme(points, targetFunction.extreme);
   console.log(extreme);
 } else {
   points = getPoints(bounds); 
