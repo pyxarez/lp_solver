@@ -9,7 +9,7 @@ let equations = [];
 let targetFunction = {
   x1: null,
   x2: null,
-  extrem: ">=",
+  extrem: "max",
 
   /**
    * Метод для подсчёта значения целевой функции
@@ -63,11 +63,11 @@ class Graph {
  * @return {number} x2 значение переменной х2.
  */
  function computeX2(con1, con2) {
- 	let number = con1.value - (con2.value * con1.x1 / con2.x1);
+  let number = con1.value - (con2.value * con1.x1 / con2.x1);
   
- 	let x2 = number * con2.x1 / (-con2.x2 * con1.x1 + con2.x1 * con1.x2); 
+  let x2 = number * con2.x1 / (-con2.x2 * con1.x1 + con2.x1 * con1.x2); 
 
- 	return x2; 
+  return x2; 
  }
 
 /**
@@ -78,9 +78,9 @@ class Graph {
  * @return {number} x1 значение переменной х1.
  */
  function computeX1(con1, x2) {
- 	let x1 = (con1.value - con1.x2 * x2) / con1.x1; 
+  let x1 = (con1.value - con1.x2 * x2) / con1.x1; 
 
- 	return x1; 
+  return x1; 
  }
 
 /**
@@ -237,7 +237,6 @@ function getPoints(bounds) {
     maps.push(eq);
   }
 
-  console.log(maps[0]);
   chainPoints(points, maps[0], bounds);
 
   return points;
@@ -313,7 +312,7 @@ function getExtrem(points, extremSign) {
       values.push(value);
   }
 
-  if (extremSign === ">=") {    
+  if (extremSign === "max") {    
     extrem = Math.max(...values);
   } else {
     extrem = Math.min(...values);
@@ -357,7 +356,7 @@ equations.push(new Equation(12, 30, "<=", 9600));
 equations.push(new Equation(1, 0, ">=", 0));
 equations.push(new Equation(0, 1, ">=", 0));
 
-targetFunction.init(2, 4, ">=");
+targetFunction.init(2, 4, "max");
 
 //получаем Map линий и их пересечений
 let bounds = fillBounds(equations);
