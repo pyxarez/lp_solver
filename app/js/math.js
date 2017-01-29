@@ -341,18 +341,17 @@ targetFunction.init(2, 4, ">=");
 
 //получаем Map линий и их пересечений
 let bounds = fillBounds(equations);
-console.log(bounds);
 
-let points;
+//последовательные точки пересечений для отрисовки
+let points, extrem;
 
-if (!checkInfinite(bounds)) {
+if (!checkInfinite(bounds) || targetFunction.extremSign === "<=") {
   points = getPoints(bounds); 
-  console.log(points);
 
-  let extrem = getExtrem(points, targetFunction.extrem);
+  extrem = getExtrem(points, targetFunction.extrem);
   console.log(extrem);
 } else {
-
+  alert("Максимальное значение ОДР не существует, ввиду её неограниченности");  
 }
 
 
