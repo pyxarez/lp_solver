@@ -114,7 +114,7 @@ let mainHTML = document.querySelector('main');
     let graphs = getStarterGraphs(equations);
 
     if (points.length == 0) {
-      alert("Ограничения не имеют общих точек");
+      alert("Ограничения не имеют общих точек");      
     } else if (!checkInfinite(bounds, points)) {
       showExtrem(points, targetFunction.extreme);
 

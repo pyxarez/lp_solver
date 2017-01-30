@@ -181,9 +181,7 @@ function fillBounds(eqs) {
    */
   let bounds = new Map();
 
-  for (let i = 0, l = eqs.length; i < l; i++) {
-
-    bounds.set(eqs[i], new Map());
+  for (let i = 0, l = eqs.length; i < l; i++) {    
 
     outer:
     for (let j = 0; j < eqs.length; j++) {
@@ -194,13 +192,20 @@ function fillBounds(eqs) {
       for (let h = 0; h < eqs.length; h++) {
         if (j == h || i == h) continue;
 
-          //Если точка не отвечает требованиям хоть одного ограничения, не записываем её, продолжаем перебирать другие точки
-          if (!checkBelongingTo(eqs[h], x1, x2)) continue outer;
-        }
-
-        bounds.get(eqs[i]).set(eqs[j], {x1: x1, x2: x2});      
+        //Если точка не отвечает требованиям хоть одного ограничения, не записываем её, продолжаем перебирать другие точки
+        if (!checkBelongingTo(eqs[h], x1, x2)) continue outer;
       }
+
+      // Условие при котором ограничение(+точки в которых оно пересекается с другими)
+      // создаётся записывается в bounds(Map ограничение) только если у него есть 
+      // хоть одно пересечение с другими линиями
+      if (!bounds.has(eqs[i])) {
+        bounds.set(eqs[i], new Map());
+      }
+
+      bounds.get(eqs[i]).set(eqs[j], {x1: x1, x2: x2});      
     }
+  }
   return bounds;
 }
 
