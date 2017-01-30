@@ -111,7 +111,7 @@ class Graph {
     },
 
     "=" : function(con, x1, x2) {
-      return computedValue = con.value ? true : false;
+      return computedValue == con.value ? true : false;
     },
   }
 
@@ -250,8 +250,6 @@ function getPoints(bounds) {
   for (let eq of bounds) {
     maps.push(eq);
   }
-
-
 
   chainPoints(points, maps[0], bounds);
 
@@ -467,12 +465,26 @@ function getNewBounds(bounds, equations) {
  * Функция подсчитывает extreme целевой функции при заданных ограничениях
  * и выводит на экран
  *
- * @param {} .
- * @param {} .
- * @param {} .
- * @return {number} .
+ * @param {array} points точки, ограничивающие ОДР.
+ * @param {string} direction направление целевой функции(max или min).
  */
 function showExtrem(points, direction) {
   let extreme = getExtreme(points, direction);
   showAnswer(extreme);
+}
+
+/**
+ * Проверяет пуст ли Map
+ *
+ * @param {Map} map любой объект типа Map.
+ * @return {boolen} пусть ли Map.
+ */
+function isEmptyMap(map) {
+  let counter = 0;
+  
+  for (let iterable of map) {
+    counter++;
+  }
+  
+  return counter == 0;
 }

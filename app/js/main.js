@@ -99,43 +99,60 @@ let mainHTML = document.querySelector('main');
 
     equations.push(new Equation(1, 0, ">=", 0));
     equations.push(new Equation(0, 1, ">=", 0));
-    console.log(equations);
 
     /* Продолжаем вакханалию */
     
     //получаем Map линий и их пересечений для подсчёта экстремума  
     let bounds = fillBounds(equations);
+    console.log(bounds);
 
-    //последовательные точки пересечений для подсчёта экстремума
-    let points = getPoints(bounds);
+    let points = [];
+    if (!isEmptyMap(bounds)) {
+      points = getPoints(bounds);      
+    }  
 
     //получаем координаты линий, будем пересчитывать для того, чтобы уместились в область
     //канваса (500;500)
     let graphs = getStarterGraphs(equations);
 
     if (points.length == 0) {
-      alert("Ограничения не имеют общих точек");      
+      // нормализация точек пересечения 
+      normaliseGraph(bounds, graphs);     
+      alert("Ограничения не имеют общих точек");
+
+    } else if (points.length == 1) {
+      showExtrem(points, targetFunction.extreme);
+
+      // нормализация точек пересечения 
+      normaliseGraph(bounds, graphs); 
+      alert("ОДР представляет собой единственную точку");
+
+    } else if (points.length == 2) {
+      showExtrem(points, targetFunction.extreme);
+
+      // нормализация точек пересечения 
+      normaliseGraph(bounds, graphs);
+      alert("ОДР представляет собой линию(2 точки на графике)");
+
     } else if (!checkInfinite(bounds, points)) {
       showExtrem(points, targetFunction.extreme);
 
       // нормализация точек пересечения 
       normaliseGraph(bounds, graphs);
-      console.log(bounds);
       points = getPoints(bounds);
-      fillArea(points);
+      fillArea(points);              
+      
     } else {  
 
       if (targetFunction.extreme === "max") {
         //Если ОДР бесконечна, что добавляем 2 фиктивных ограничения, для её отрисовки и пересчитываем точки пересечения
         //Теперь, если есть пересечение с фиктивными осями, они у нас отражены в bounds
         getNewBounds(bounds, equations);
-        console.log(bounds);
 
         // нормализация точек пересечения 
         normaliseGraph(bounds, graphs);
         //точки для построения ОДР
         points = getPoints(bounds); 
-        console.log(bounds);
         fillArea(points);
         alert("Максимальное значение ОДР не существует, ввиду её неограниченности");  
 
@@ -145,7 +162,6 @@ let mainHTML = document.querySelector('main');
         //Если ОДР бесконечна, что добавляем 2 фиктивных ограничения, для её отрисовки и пересчитываем точки пересечения
         //Теперь, если есть пересечение с фиктивными осями, они у нас отражены в bounds
         getNewBounds(bounds, equations);
-        console.log(bounds);
 
         // нормализация точек пересечения 
         normaliseGraph(bounds, graphs);
@@ -154,7 +170,6 @@ let mainHTML = document.querySelector('main');
         fillArea(points);
       }
     }
-    console.log(graphs);
 
     // рисуем прямые, используя массив объектов Graph
     for (let i = 0; i < graphs.length; i++) {
