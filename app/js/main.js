@@ -106,6 +106,7 @@ let mainHTML = document.querySelector('main');
     //последовательные точки пересечений для подсчёта экстремума
     let points = getPoints(bounds), extreme;
 
+    //линий для построения графика, будут пересчитаны
     let graphs = getStarterGraphs(equations);
 
     //находим экстремум, если возможно, изменяем коопдинаты для отрисовки
@@ -119,13 +120,17 @@ let mainHTML = document.querySelector('main');
       console.log(bounds);
       points = getPoints(bounds);
     } else {  
-      bounds.push(new Equation(1, 0, "<=", 500)); 
-      bounds.push(new Equation(0, 1, "<=", 500));
-
+      points = getPoints(bounds); 
+      //Если ОДР бесконечна, что добавляем 2 фиктивных ограничения, для её отрисовки
+      equations.push(new Equation(1, 0, "<=", 500)); 
+      equations.push(new Equation(0, 1, "<=", 500));
+      bounds = fillBounds(equations);
+      console.log(bounds);
 
       if (targetFunction.extreme === "max") {
         // нормализация точек пересечения 
         normaliseGraph(bounds, graphs);
+        //точки для построения ОДР
         points = getPoints(bounds); 
         console.log(bounds);
 
@@ -137,6 +142,7 @@ let mainHTML = document.querySelector('main');
 
         // нормализация точек пересечения 
         normaliseGraph(bounds, graphs);
+        //точки для построения ОДР
         points = getPoints(bounds); 
       }
     }
