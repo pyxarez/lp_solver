@@ -440,29 +440,4 @@ function normaliseGraph(bounds, graphs) {
   }
 }
 
-/**
- * Создаём массив линий для отрисовки на основе объекта типа Map
- *
- * @param {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
- * @return {array} graphs массив линий(иерархия: [{point1: {x1, x2}, point2:{x1, x2}}].
- */
-// function getGraphs(bounds) {
-//   let graphs = [];
-
-//   for (let point of bounds.values()) {
-//     let coords = {}
-    
-//     for (let coord of point.values()) {
-//       if (coords.point1) {
-//         coords.point2 = coord; 
-//       } else {
-//         coords.point1 = coord; 
-//       }
-//     }
-
-//     graphs.push(coords);
-//   }
-
-//   return graphs;
-// }
 
