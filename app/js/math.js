@@ -42,7 +42,20 @@ class Graph {
     this.point2 = {
       x1: 0,
       x2: eq.value / eq.x2
-    };
+    };   
+    this.meta = {
+      sign: eq.sign,
+      value: eq.value
+    }  
+  }
+}
+
+class reverseEquation {
+  constructor(graph) {
+    this.x1 = graph.meta.value / graph.point1.x1;
+    this.x2 = graph.meta.value / graph.point2.x2;
+    this.sign = graph.meta.sign;
+    this.value = graph.meta.value;
   }
 }
 
@@ -110,9 +123,9 @@ class Graph {
   // удобно для для того, чтобы не менять
   // логику счёта х1 и х2 
   if (con1.x1 == 1 && con1.value == 0 ||
-      con1.x2 == 1 && con1.value == 0 ||
-      con1.x1 == 1 && con1.value == 500 ||
-      con1.x2 == 1 && con1.value == 500) 
+    con1.x2 == 1 && con1.value == 0 ||
+    con1.x1 == 1 && con1.value == 500 ||
+    con1.x2 == 1 && con1.value == 500) 
   {
     let temp = con1;
     con1 = con2;
@@ -170,14 +183,14 @@ return values;
 }
 
 /**
- * Функция, проходящая все ограничения и проверяющая подходит ли точка под это ограничение
+ * Проверяет соответствие точки с координатами (х1, х2) всем ограничениям
  *
  * @param {array} eqs массив ограничений для нашей задачи.
  * @param {number} x1 координата проверяемой точки.
  * @param {number} x2 координата проверяемой точки.
  * @return {bool} .
  */
-function isBellongingToAllEquations(eqs, x1, x2) {
+ function isBellongingToAllEquations(eqs, x1, x2) {
   for (let h = 0; h < eqs.length; h++) {
 
     if (!checkBelongingTo(eqs[h], x1, x2)) {
@@ -194,13 +207,13 @@ function isBellongingToAllEquations(eqs, x1, x2) {
  * @param {object} eqs массив ограничений нашей задачи.
  * @return {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
  */
-function fillBounds(eqs) {
+ function fillBounds(eqs) {
   /* 
    * Объект, хранящий выражения и точки пересечения с другими объектами графика
    */
-  let bounds = new Map();
+   let bounds = new Map();
 
-  for (let i = 0, l = eqs.length; i < l; i++) {    
+   for (let i = 0, l = eqs.length; i < l; i++) {    
 
     outer:
     for (let j = 0; j < eqs.length; j++) {
@@ -229,7 +242,7 @@ function fillBounds(eqs) {
  *
  * @param {Map} все точки пересечения, на ОДР.
  */
-function checkInfinite(equations) {
+ function checkInfinite(equations) {
   for (var i = 0; i < equations.length; i++) {
     if (equations[i].sign === "<=" || equations[i].sign === "=") {
       return false;
@@ -245,7 +258,7 @@ function checkInfinite(equations) {
  * @param {Map} все точки пересечения, на ОДР.
  * @return {array} все точки для закрашивания ОДР(некое подобие отсортированного массива).
  */
-function getPoints(bounds) {
+ function getPoints(bounds) {
   let points = [];
   let maps = [];
 
@@ -351,7 +364,10 @@ function getPoints(bounds) {
   let graphs = [];
 
   for (var i = 0; i < equations.length - 2; i++) {    
-    graphs.push(new Graph(equations[i]));
+    let graph = new Graph(equations[i]);
+    // graph.sign = equations[i].sign;
+    // graph.value = equations[i].value;
+    graphs.push(graph);
   }
 
   return graphs;
@@ -441,11 +457,15 @@ function getPoints(bounds) {
   for (var i = 0; i < graphs.length; i++) {    
 
     for (let key in graphs[i]) {
-      let line = graphs[i][key];
-      let largerCoord = line.x1 > line.x2 ? line.x1 : line.x2;
+      if (key == "meta") {
+        graphs[i][key].value *= ratio;
+      } else {
+        let line = graphs[i][key];
+        let largerCoord = line.x1 > line.x2 ? line.x1 : line.x2;
 
-      line.x1 *= ratio;
-      line.x2 *= ratio;
+        line.x1 *= ratio;
+        line.x2 *= ratio;        
+      }
     }
   }
 }
@@ -457,10 +477,10 @@ function getPoints(bounds) {
  *
  * @param {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
  */
-function getNewBounds(bounds, equations) {
+ function getNewBounds(bounds, equations) {
   equations.push(new Equation(1, 0, "<=", 500)); 
   equations.push(new Equation(0, 1, "<=", 500));
-  
+
   return fillBounds(equations);
 }
 
@@ -471,7 +491,7 @@ function getNewBounds(bounds, equations) {
  * @param {array} points точки, ограничивающие ОДР.
  * @param {string} direction направление целевой функции(max или min).
  */
-function showExtrem(points, direction) {
+ function showExtrem(points, direction) {
   let extreme = getExtreme(points, direction);
   showAnswer(extreme);
 }
@@ -482,7 +502,7 @@ function showExtrem(points, direction) {
  * @param {Map} map любой объект типа Map.
  * @return {bool} пусть ли Map.
  */
-function isEmptyMap(map) {
+ function isEmptyMap(map) {
   let counter = 0;
 
   for (let iterable of map) {
@@ -490,4 +510,22 @@ function isEmptyMap(map) {
   }
   
   return counter == 0;
+}
+
+/**
+ * Функция получения новых уравнений для построения правильной неограниченной ОДР
+ *
+ * @param {} .
+ * @param {} .
+ * @param {} .
+ * @return {number} .
+ */
+function getNewEquations(graphs) {
+  let equations = [];
+
+  for (var i = 0; i < graphs.length; i++) {
+    equations.push(new reverseEquation(graphs[i]));
+  }
+
+  return equations;
 }
