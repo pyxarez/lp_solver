@@ -1,9 +1,3 @@
-/** Массив ограничений (уравнений системы ограничения)
- *
- */
- let equations = [],
- normalisedEqs = [];
-
 /* 
   * Целевая функция
   */
@@ -216,16 +210,25 @@ function fillBounds(eqs) {
  *
  * @param {Map} все точки пересечения, на ОДР.
  */
-function checkInfinite(bounds) {
-  for (let eq of bounds.values()) {
-    let counter = 0;
+function checkInfinite(bounds, points) {
+  let firstPoint = points[0],
+      lastPoint = points[points.length - 1];
+
+  for (let eq of bounds.values()) {    
+    //Подсчитывает совпадения
+    let overlap = 0;
 
     for (let point of eq.values()) {
-      counter++;      
+      if ((point.x1 == firstPoint.x1 && point.x2 == firstPoint.x2)
+       || (point.x1 == lastPoint.x1 && point.x2 == lastPoint.x2)) {
+        overlap++;
+      }    
     }
 
-    if (counter != 2) return true;
+    if (overlap == 2) return false;
   }
+
+  return true;
 }
 
 /**
@@ -439,4 +442,29 @@ function getPoints(bounds) {
   }
 }
 
+/**
+ * Функция упрощает повторный пересчёт точек пересечения линий(ограничений), удовлетворяющих
+ * ОДР при добавлении двух фиктивных осей(верхней и правой)
+ * Используется только при неограниченной ОДР
+ *
+ * @param {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
+ */
+function getNewBounds(bounds, equations) {
+  equations.push(new Equation(1, 0, "<=", 500)); 
+  equations.push(new Equation(0, 1, "<=", 500));
+  bounds = fillBounds(equations);
+}
 
+/**
+ * Функция подсчитывает extreme целевой функции при заданных ограничениях
+ * и выводит на экран
+ *
+ * @param {} .
+ * @param {} .
+ * @param {} .
+ * @return {number} .
+ */
+function showExtrem(points, direction) {
+  let extreme = getExtreme(points, direction);
+  showAnswer(extreme);
+}
