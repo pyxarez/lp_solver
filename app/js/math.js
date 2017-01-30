@@ -61,7 +61,7 @@ class Graph {
 
   let x2 = number * con2.x1 / (-con2.x2 * con1.x1 + con2.x1 * con1.x2); 
 
-  return x2; 
+  return +x2.toFixed(3); 
 }
 
 /**
@@ -74,7 +74,7 @@ class Graph {
  function computeX1(con1, x2) {
   let x1 = (con1.value - con1.x2 * x2) / con1.x1; 
 
-  return x1; 
+  return +x1.toFixed(3); 
 }
 
 /**
@@ -87,35 +87,7 @@ class Graph {
  function computeX2ByX1(con1, x1) {
   let x2 =  (con1.value - con1.x1 * x1) / con1.x2;
 
-  return x2;
-}
-
-/**
- * Функция проверки принадлежности точки к ОДР конекретного ограничения
- *
- * @param {object} con ограничение(выражение).
- * @param {number} x1 значение х1 для ограничения.
- * @param {number} х2 значение х2 для ограничение.
- * @return {bool} возращается результат проверки на принадлежность к одр для ограниченния.
- */
- function checkBelongingTo(con, x1, x2) {
-  let computedValue = con.x1 * x1 + con.x2 * x2;
-
-  let signs = {
-    "<=" : function(con, x1, x2) {
-      return computedValue <= con.value ? true : false;
-    },
-
-    ">=" : function(con, x1, x2) {
-      return computedValue >= con.value ? true : false;
-    },
-
-    "=" : function(con, x1, x2) {
-      return computedValue == con.value ? true : false;
-    },
-  }
-
-  return signs[con.sign](con, x1, x2);
+  return +x2.toFixed(3);
 }
 
 /**
@@ -167,6 +139,34 @@ class Graph {
   values.push(x2);
 // 
 return values;
+}
+
+/**
+ * Функция проверки принадлежности точки к ОДР конекретного ограничения
+ *
+ * @param {object} con ограничение(выражение).
+ * @param {number} x1 значение х1 для ограничения.
+ * @param {number} х2 значение х2 для ограничение.
+ * @return {bool} возращается результат проверки на принадлежность к одр для ограниченния.
+ */
+ function checkBelongingTo(con, x1, x2) {
+  let computedValue = +(con.x1 * x1 + con.x2 * x2).toFixed(2);
+
+  let signs = {
+    "<=" : function(con, x1, x2) {
+      return computedValue <= con.value ? true : false;
+    },
+
+    ">=" : function(con, x1, x2) {
+      return computedValue >= con.value ? true : false;
+    },
+
+    "=" : function(con, x1, x2) {
+      return computedValue == con.value ? true : false;
+    },
+  }
+
+  return signs[con.sign](con, x1, x2);
 }
 
 /**
