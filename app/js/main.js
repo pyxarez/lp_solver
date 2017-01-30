@@ -146,7 +146,7 @@ let mainHTML = document.querySelector('main');
       if (targetFunction.extreme === "max") {
         //Если ОДР бесконечна, что добавляем 2 фиктивных ограничения, для её отрисовки и пересчитываем точки пересечения
         //Теперь, если есть пересечение с фиктивными осями, они у нас отражены в bounds
-        getNewBounds(bounds, equations);
+        bounds = getNewBounds(bounds, equations);
         console.log(bounds);
         
 
@@ -164,7 +164,7 @@ let mainHTML = document.querySelector('main');
 
         //Если ОДР бесконечна, что добавляем 2 фиктивных ограничения, для её отрисовки и пересчитываем точки пересечения
         //Теперь, если есть пересечение с фиктивными осями, они у нас отражены в bounds
-        getNewBounds(bounds, equations);
+        bounds = getNewBounds(bounds, equations);
 
         // нормализация точек пересечения 
         normaliseGraph(bounds, graphs);

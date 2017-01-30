@@ -460,7 +460,8 @@ function getPoints(bounds) {
 function getNewBounds(bounds, equations) {
   equations.push(new Equation(1, 0, "<=", 500)); 
   equations.push(new Equation(0, 1, "<=", 500));
-  bounds = fillBounds(equations);
+  
+  return fillBounds(equations);
 }
 
 /**
