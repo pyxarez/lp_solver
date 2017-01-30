@@ -96,7 +96,7 @@ class Graph {
  * @param {object} con ограничение(выражение).
  * @param {number} x1 значение х1 для ограничения.
  * @param {number} х2 значение х2 для ограничение.
- * @return {boolean} возращается результат проверки на принадлежность к одр для ограниченния.
+ * @return {bool} возращается результат проверки на принадлежность к одр для ограниченния.
  */
  function checkBelongingTo(con, x1, x2) {
   let computedValue = con.x1 * x1 + con.x2 * x2;
@@ -138,9 +138,9 @@ class Graph {
   // удобно для для того, чтобы не менять
   // логику счёта х1 и х2 
   if (con1.x1 == 1 && con1.value == 0 ||
-    con1.x2 == 1 && con1.value == 0 ||
-    con1.x1 == 1 && con1.value == 500 ||
-    con1.x2 == 1 && con1.value == 500) 
+      con1.x2 == 1 && con1.value == 0 ||
+      con1.x1 == 1 && con1.value == 500 ||
+      con1.x2 == 1 && con1.value == 500) 
   {
     let temp = con1;
     con1 = con2;
@@ -170,6 +170,25 @@ return values;
 }
 
 /**
+ * Функция, проходящая все ограничения и проверяющая подходит ли точка под это ограничение
+ *
+ * @param {array} eqs массив ограничений для нашей задачи.
+ * @param {number} x1 координата проверяемой точки.
+ * @param {number} x2 координата проверяемой точки.
+ * @return {bool} .
+ */
+function isBellongingToAllEquations(eqs, x1, x2) {
+  for (let h = 0; h < eqs.length; h++) {
+
+    if (!checkBelongingTo(eqs[h], x1, x2)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
  * Заполняет Map точками пересечений, подходящими под наш ОДР
  *
  * @param {object} eqs массив ограничений нашей задачи.
@@ -189,12 +208,7 @@ function fillBounds(eqs) {
 
       let [x1, x2] = getX1AndX2(eqs[i], eqs[j]);
 
-      for (let h = 0; h < eqs.length; h++) {
-        if (j == h || i == h) continue;
-
-        //Если точка не отвечает требованиям хоть одного ограничения, не записываем её, продолжаем перебирать другие точки
-        if (!checkBelongingTo(eqs[h], x1, x2)) continue outer;
-      }
+      if (!isBellongingToAllEquations(eqs, x1, x2)) continue;          
 
       // Условие при котором ограничение(+точки в которых оно пересекается с другими)
       // создаётся записывается в bounds(Map ограничение) только если у него есть 
@@ -211,27 +225,15 @@ function fillBounds(eqs) {
 
 /**
  * Функция проверки ОДР на ограниченность
+ * будет работать, пока кто-нибудь не введёт уравнение задающее прямую, параллельную оси 
  *
  * @param {Map} все точки пересечения, на ОДР.
  */
-function checkInfinite(bounds, points) {
-  let firstPoint = points[0],
-      lastPoint = points[points.length - 1],
-      line = [];
-
-  for (let eq of bounds.values()) {    
-    
-    for (let point of eq.values()) {
-      line.push(point) 
+function checkInfinite(equations) {
+  for (var i = 0; i < equations.length; i++) {
+    if (equations[i].sign === "<=" || equations[i].sign === "=") {
+      return false;
     }
-
-    if ((line[0].x1 == firstPoint.x1 && line[0].x2 == firstPoint.x2)
-     && (line[1].x1 == lastPoint.x1 && line[1].x2 == lastPoint.x2)) {
-        return false;
-    }  
-
-    line = [];  
-
   }
 
   return true;
@@ -477,11 +479,11 @@ function showExtrem(points, direction) {
  * Проверяет пуст ли Map
  *
  * @param {Map} map любой объект типа Map.
- * @return {boolen} пусть ли Map.
+ * @return {bool} пусть ли Map.
  */
 function isEmptyMap(map) {
   let counter = 0;
-  
+
   for (let iterable of map) {
     counter++;
   }

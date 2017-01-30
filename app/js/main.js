@@ -86,7 +86,7 @@ let mainHTML = document.querySelector('main');
         let inputs = cons[i].getElementsByTagName('input'),
         sign = cons[i].querySelector('.select');
 
-        // получаем знак ограничения 
+        // получаем знак ограничения  
         sign = sign.options[sign.selectedIndex].value;
 
         // данные ограничения
@@ -104,7 +104,6 @@ let mainHTML = document.querySelector('main');
     
     //получаем Map линий и их пересечений для подсчёта экстремума  
     let bounds = fillBounds(equations);
-    console.log(bounds);
 
     let points = [];
     if (!isEmptyMap(bounds)) {
@@ -134,7 +133,7 @@ let mainHTML = document.querySelector('main');
       normaliseGraph(bounds, graphs);
       alert("ОДР представляет собой линию(2 точки на графике)");
 
-    } else if (!checkInfinite(bounds, points)) {
+    } else if (!checkInfinite(equations)) {
       showExtrem(points, targetFunction.extreme);
 
       // нормализация точек пересечения 
@@ -148,12 +147,16 @@ let mainHTML = document.querySelector('main');
         //Если ОДР бесконечна, что добавляем 2 фиктивных ограничения, для её отрисовки и пересчитываем точки пересечения
         //Теперь, если есть пересечение с фиктивными осями, они у нас отражены в bounds
         getNewBounds(bounds, equations);
+        console.log(bounds);
+        
 
         // нормализация точек пересечения 
         normaliseGraph(bounds, graphs);
+        
         //точки для построения ОДР
         points = getPoints(bounds); 
         fillArea(points);
+        
         alert("Максимальное значение ОДР не существует, ввиду её неограниченности");  
 
       } else {
