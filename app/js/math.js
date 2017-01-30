@@ -250,7 +250,7 @@ function getPoints(bounds) {
 /**
  * Рекурсивное заполнение массива объектами, содержащими точки для закрашивания ОДР, каждая из которых расположена в правильном порядке
  *
- * @param {array} chain массив объектов, содержащиъ координаты точек.
+ * @param {array} chain массив объектов, содержащих координатами точек.
  * @param {Map} eq объект типа Map, содержащий выражение(ограничение, линию) и точки пересечения с другими линиями, подходящими под ОДР.
  * @param {Map} объект со всеми Выражениями и соответсвующими им пересечениями.
  */
@@ -260,15 +260,15 @@ function getPoints(bounds) {
   for (let coords of point) {
 
     if (!(~chain.indexOf(coords[1]))) {
-      let trigger = false;
+      let isSame = false;
 
       chain.forEach((point) => {
         if (point.x1 == coords[1].x1 && point.x2 == coords[1].x2) {
-          trigger = true;
+          isSame = true;
         }
       });
 
-      if (!trigger) {
+      if (!isSame) {
         chain.push(coords[1]);
 
         for (let bound of bounds) {
@@ -367,7 +367,7 @@ function getPoints(bounds) {
       }
     }
 
-    return max;
+    return max;    
   }
 
 /**

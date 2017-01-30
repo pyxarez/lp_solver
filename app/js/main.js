@@ -109,8 +109,10 @@ let mainHTML = document.querySelector('main');
     //линий для построения графика, будут пересчитаны
     let graphs = getStarterGraphs(equations);
 
-    //находим экстремум, если возможно, изменяем коопдинаты для отрисовки
-    if (!checkInfinite(bounds)) {
+    //находим экстремум, если возможно, изменяем координаты для отрисовки
+    if (points.length == 0) {
+      alert("Ограничения не имеют общих точек");
+    } else if (!checkInfinite(bounds)) {
       extreme = getExtreme(points, targetFunction.extreme);
       extreme ? showAnswer(extreme) : null;
 
@@ -119,6 +121,9 @@ let mainHTML = document.querySelector('main');
       normaliseGraph(bounds, graphs);
       console.log(bounds);
       points = getPoints(bounds);
+
+      // закрашиваем ОДР
+      fillArea(points);
     } else {  
       points = getPoints(bounds); 
       //Если ОДР бесконечна, что добавляем 2 фиктивных ограничения, для её отрисовки
@@ -134,6 +139,8 @@ let mainHTML = document.querySelector('main');
         points = getPoints(bounds); 
         console.log(bounds);
 
+        // закрашиваем ОДР
+        fillArea(points);
         alert("Максимальное значение ОДР не существует, ввиду её неограниченности");  
       } else {
         extreme = getExtreme(points, targetFunction.extreme);
@@ -143,7 +150,9 @@ let mainHTML = document.querySelector('main');
         // нормализация точек пересечения 
         normaliseGraph(bounds, graphs);
         //точки для построения ОДР
-        points = getPoints(bounds); 
+        points = getPoints(bounds);
+        // закрашиваем ОДР
+        fillArea(points);
       }
     }
     console.log(graphs);
@@ -152,9 +161,6 @@ let mainHTML = document.querySelector('main');
     for (let i = 0; i < graphs.length; i++) {
       drawLine(graphs[i]);
     }
-
-    // закрашиваем ОДР
-    fillArea(points);
 
     // линия уровня
     drawLevelLine();
