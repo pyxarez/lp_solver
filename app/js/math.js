@@ -180,7 +180,6 @@ function fillBounds(eqs) {
    * Объект, хранящий выражения и точки пересечения с другими объектами графика
    */
   let bounds = new Map();
-  let zeroPoint = [0, 0];
 
   for (let i = 0, l = eqs.length; i < l; i++) {
 
@@ -212,20 +211,22 @@ function fillBounds(eqs) {
  */
 function checkInfinite(bounds, points) {
   let firstPoint = points[0],
-      lastPoint = points[points.length - 1];
+      lastPoint = points[points.length - 1],
+      line = [];
 
   for (let eq of bounds.values()) {    
-    //Подсчитывает совпадения
-    let overlap = 0;
-
+    
     for (let point of eq.values()) {
-      if ((point.x1 == firstPoint.x1 && point.x2 == firstPoint.x2)
-       || (point.x1 == lastPoint.x1 && point.x2 == lastPoint.x2)) {
-        overlap++;
-      }    
+      line.push(point) 
     }
 
-    if (overlap == 2) return false;
+    if ((line[0].x1 == firstPoint.x1 && line[0].x2 == firstPoint.x2)
+     && (line[1].x1 == lastPoint.x1 && line[1].x2 == lastPoint.x2)) {
+        return false;
+    }  
+
+    line = [];  
+
   }
 
   return true;
@@ -244,6 +245,8 @@ function getPoints(bounds) {
   for (let eq of bounds) {
     maps.push(eq);
   }
+
+
 
   chainPoints(points, maps[0], bounds);
 
