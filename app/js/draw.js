@@ -25,15 +25,16 @@ function getReverse(y) {
 
 /**
 	* Отрисовывает линию
-	* @param {array} line Массив объектов линий
-	* объект линии представляет две точки с двумя координатами
+	* @param {object} line Объект с двумя точками
+	* каждая точка -- объект с двумя координатами 
 	*/
 function drawLine(line) {
-	let line1 = line[0];
-	let line2 = line[1];
+	ctx.strokeStyle = 'rgba(39, 31, 122, .75)';
+	let point1 = line.point1;
+	let point2 = line.point2;
 	ctx.beginPath();
-	ctx.moveTo(line1.x1, getReverse(line1.x2));
-	ctx.lineTo(line2.x1, getReverse(line2.x2));
+	ctx.moveTo(point1.x1, getReverse(point1.x2));
+	ctx.lineTo(point2.x1, getReverse(point2.x2));
 	ctx.stroke();
 }
 
@@ -48,6 +49,13 @@ function drawVector(x, y) {
 	ctx.lineTo(x, range.y - y);
 	ctx.stroke();
 }	
+
+function drawLevelLine() {
+	let equation = new Equation(targetFunction.x1, targetFunction.x2, '=', targetFunction.x1 * targetFunction.x2);
+	let graph = new Graph(equation);
+
+	drawLine(graph);
+}
 
 /**
 	* Закрашивает область ОДР (если она не пустое множество)

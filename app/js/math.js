@@ -1,15 +1,16 @@
 /** Массив ограничений (уравнений системы ограничения)
  *
  */
-let equations = [];
+ let equations = [],
+     normalisedEqs = [];
 
 /* 
   * Целевая функция
-*/
-let targetFunction = {
-  x1: null,
-  x2: null,
-  extreme: "max",
+  */
+  let targetFunction = {
+    x1: null,
+    x2: null,
+    extreme: "max",
 
   /**
    * Метод для подсчёта значения целевой функции
@@ -18,27 +19,27 @@ let targetFunction = {
    * @param {number} х2 значение х2.
    * @return {number} значение целевой функции при данных х1 и х2.
    */
-  calculate: function(x1, x2) {
+   calculate: function(x1, x2) {
     return this.x1 * x1 + this.x2 * x2; 
-  },
+   },
 
-  init: function(x1, x2, extreme) {
+   init: function(x1, x2, extreme) {
     this.x1 = x1;
     this.x2 = x2;
     this.extreme = extreme;
-  }
-};
+   }
+ };
 
-class Equation {
+ class Equation {
   constructor(x1, x2, sign, value) {
     this.x1 = x1;
     this.x2 = x2;
     this.sign = sign;
     this.value = value;
   }
-}
+ }
 
-class Graph {
+ class Graph {
   constructor(eq) {
     this.point1 = {
       x1: eq.value / eq.x1,
@@ -49,10 +50,10 @@ class Graph {
       x2: eq.value / eq.x2
     };
   }
-}
+ }
 
 
-/*  Вычисляем систему уравнений */
+ /*  Вычисляем систему уравнений */
 
 /**
  * Вычисляет значение х2 для состемы уравнений
@@ -63,7 +64,7 @@ class Graph {
  */
  function computeX2(con1, con2) {
   let number = con1.value - (con2.value * con1.x1 / con2.x1);
-  
+
   let x2 = number * con2.x1 / (-con2.x2 * con1.x1 + con2.x1 * con1.x2); 
 
   return x2; 
@@ -89,11 +90,11 @@ class Graph {
  * @param {number} x1 значение переменной х1 для системы уравнений.
  * @return {number} x2 значение переменной х2.
  */
-function computeX2ByX1(con1, x1) {
+ function computeX2ByX1(con1, x1) {
   let x2 =  (con1.value - con1.x1 * x1) / con1.x2;
 
   return x2;
-}
+ }
 
 /**
  * Функция проверки принадлежности точки к ОДР конекретного ограничения
@@ -103,7 +104,7 @@ function computeX2ByX1(con1, x1) {
  * @param {number} х2 значение х2 для ограничение.
  * @return {boolean} возращается результат проверки на принадлежность к одр для ограниченния.
  */
-function checkBelongingTo(con, x1, x2) {
+ function checkBelongingTo(con, x1, x2) {
   let computedValue = con.x1 * x1 + con.x2 * x2;
 
   let signs = {
@@ -121,7 +122,7 @@ function checkBelongingTo(con, x1, x2) {
   }
 
   return signs[con.sign](con, x1, x2);
-}
+ }
 
 /**
  * Функция вычисления х1 и х2, решает какой тип системы уравнений(пряма и ось х1, прямая и прямая, ось х2) и выполняет соответсвующие дествие
@@ -135,7 +136,7 @@ function checkBelongingTo(con, x1, x2) {
  * @param {object} con2 ограничение 2.
  * @return {array} значения х1 и х2 при заданных ограничениях.
  */
-function getX1AndX2(con1, con2) {
+ function getX1AndX2(con1, con2) {
   let values = [];
   let x1, x2;
 
@@ -157,12 +158,12 @@ function getX1AndX2(con1, con2) {
     x1 = con2.value;
     x2 = computeX2ByX1(con1, x1);
 
-  // Если второе ограничение уравнение оси х1
+    // Если второе ограничение уравнение оси х1
   } else if (con2.x2 == 1 && con2.value == 0 || con2.x2 == 1 && con2.value == 500) {
     x2 = con2.value;
     x1 = computeX1(con1, x2);
 
-  // Если оба ограничения уравнения прямых
+    // Если оба ограничения уравнения прямых
   } else {
     x2 = computeX2(con1, con2);
     x1 = computeX1(con1, x2);
@@ -180,43 +181,44 @@ return values;
  * @param {object} eqs массив ограничений нашей задачи.
  * @return {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
  */
-function fillBounds(eqs) {
+ function fillBounds(eqs) {
   /* 
     * Объект, хранящий выражения и точки пересечения с другими объектами графика
-  */
-  let bounds = new Map();
-  let zeroPoint = [0, 0];
+    */
+    let bounds = new Map();
+    let zeroPoint = [0, 0];
 
-  for (let i = 0, l = eqs.length; i < l; i++) {
+    for (let i = 0, l = eqs.length; i < l; i++) {
 
-    bounds.set(eqs[i], new Map());
+      bounds.set(eqs[i], new Map());
 
-    outer:
-    for (let j = 0; j < eqs.length; j++) {
-      if (j == i) continue;
+      outer:
+      for (let j = 0; j < eqs.length; j++) {
+        if (j == i) continue;
 
-      let [x1, x2] = getX1AndX2(eqs[i], eqs[j]);
+        let [x1, x2] = getX1AndX2(eqs[i], eqs[j]);
 
-      for (let h = 0; h < eqs.length; h++) {
-        if (j == h || i == h) continue;
+        for (let h = 0; h < eqs.length; h++) {
+          if (j == h || i == h) continue;
 
-        if (!checkBelongingTo(eqs[h], x1, x2)) continue outer;
+          //Если точка не отвечает требованиям хоть одного ограничения, не записываем её, продолжаем перебирать другие точки
+          if (!checkBelongingTo(eqs[h], x1, x2)) continue outer;
+        }
+
+        bounds.get(eqs[i]).set(eqs[j], {x1: x1, x2: x2});      
       }
-      
-      bounds.get(eqs[i]).set(eqs[j], {x1: x1, x2: x2});      
+
     }
 
+    return bounds;
   }
-
-  return bounds;
-}
 
 /**
  * Функция проверки ОДР на ограниченность
  *
  * @param {Map} все точки пересечения, на ОДР.
  */
-function checkInfinite(bounds) {
+ function checkInfinite(bounds) {
   for (let eq of bounds.values()) {
     let counter = 0;
 
@@ -226,7 +228,7 @@ function checkInfinite(bounds) {
 
     if (counter != 2) return true;
   }
-}
+ }
 
 /**
  * Функция подготавливает точки для построения графика
@@ -234,7 +236,7 @@ function checkInfinite(bounds) {
  * @param {Map} все точки пересечения, на ОДР.
  * @return {array} все точки для закрашивания ОДР(некое подобие отсортированного массива).
  */
-function getPoints(bounds) {
+ function getPoints(bounds) {
   let points = [];
   let maps = [];
 
@@ -245,7 +247,7 @@ function getPoints(bounds) {
   chainPoints(points, maps[0], bounds);
 
   return points;
-}
+ }
 
 /**
  * Рекурсивное заполнение массива объектами, содержащими точки для закрашивания ОДР, каждая из которых расположена в правильном порядке
@@ -254,9 +256,9 @@ function getPoints(bounds) {
  * @param {Map} eq объект типа Map, содержащий выражение(ограничение, линию) и точки пересечения с другими линиями, подходящими под ОДР.
  * @param {Map} объект со всеми Выражениями и соответсвующими им пересечениями.
  */
-function chainPoints(chain, eq, bounds) {
+ function chainPoints(chain, eq, bounds) {
   let point = eq[1];
-  
+
   for (let coords of point) {
 
     if (!(~chain.indexOf(coords[1]))) {
@@ -279,7 +281,7 @@ function chainPoints(chain, eq, bounds) {
       }   
     }   
   }  
-}
+ }
 
 
 /**
@@ -288,7 +290,7 @@ function chainPoints(chain, eq, bounds) {
  * @param {array} points точки пересечения, подходящие под ОДР.
  * @return {array} значения целевой функции при заданных х1 и х2.
  */
-function getValues(points) {
+ function getValues(points) {
   let valuesForPoint = new Map();
 
   points.forEach((point) => {
@@ -298,7 +300,7 @@ function getValues(points) {
   });
 
   return valuesForPoint;
-}
+ }
 
 /**
  * Функция вычисления экстремума целевой функции
@@ -307,14 +309,14 @@ function getValues(points) {
  * @param {string} extremeSign знак целевой функции.
  * @return {Iterator} value содержит экстремум целевой функции и х1 и х2 при нём.
  */
-function getExtreme(points, extremeSign) {
+ function getExtreme(points, extremeSign) {
   let vForP = getValues(points);
 
   let values = [],
-      extreme;
+  extreme;
 
   for (let value of vForP.values()) {
-      values.push(value);
+    values.push(value);
   }
 
   if (extremeSign === "max") {    
@@ -328,78 +330,139 @@ function getExtreme(points, extremeSign) {
       return value;     
     }
   }
+ }
+
+/**
+ * Функция создаёт стартовые координаты для линий на графике
+ *
+ * @param {array} equations массив ограничений.
+ * @return {array} массив линий для отрисовки(будут пересчитаны, в случаевыхода за границы canvas.
+ */
+function getStarterGraphs(equations) {
+  let graphs = [];
+
+  for (var i = 0; i < equations.length - 2; i++) {    
+    graphs.push(new Graph(equations[i]));
+  }
+
+  return graphs;
 }
 
 /**
- * Функция получает значения всех точек на нашем графе и преобразует их для отрисовки
+  * Находим максимальное значения координат на графике по точкам линий
+  *
+  * @param {array} graphs массив линий, содержащих точки для отрисовки на графике.
+  * @return {number} max максимальное значение координат на графике.
+  */
+function getMaxCoord(graphs) {
+  let max = 0;
+
+  for (var i = 0; i < graphs.length; i++) {    
+
+    for (let key in graphs[i]) {
+      let line = graphs[i][key];
+      let largerCoord = line.x1 > line.x2 ? line.x1 : line.x2;
+
+      if (largerCoord > max) {
+        max = largerCoord;
+      }
+    }
+  }
+
+  return max;
+}
+
+/**
+ * Вычисляет коэффицент на который будут помножены координаты каждой из точек пересечения
  *
- * @param {} .
- * @param {} .
- * @param {} .
- * @return {number} .
+ * @param {Map} graphs Map ограничений и их пересечений, удовлетворящих ОДР.
+ * @return {number} ratio коэффицент умножения.
  */
-function makePaintable(points, graph) {
-  let allPointsOnTheScreen = [];
+function getRatio(graphs) {
+  let maxCoord = getMaxCoord(graphs),
+  ratio = 1;
 
-  points.forEach((point) => {
-    allPointsOnTheScreen.push(point.x1, point.x2);
-  });
-
-  for (let key in graph) {
-    allPointsOnTheScreen.push(graph[key])
+  switch (true) {
+    case (maxCoord > 0 && maxCoord <= 0.5):
+    ratio = 600;
+    break;
+    case (maxCoord > 0.5 && maxCoord <= 1):
+    ratio = 400;
+    break;
+    case (maxCoord > 1 && maxCoord <= 4.5):
+    ratio = 100;
+    break;
+    case (maxCoord > 4.5 && maxCoord <= 10):
+    ratio = 45;
+    break;
+    case (maxCoord > 10 && maxCoord <= 33):
+    ratio = 2;
+    break;
+    case (maxCoord > 33 && maxCoord <= 99):
+    ratio = 5;
+    break;
+    case (maxCoord > 500 && maxCoord <= 1000):
+    ratio = 0.4;
+    break;
+    case (maxCoord > 1000 && maxCoord <= 2400):
+    ratio = 0.2;
+    break;
   }
-}
-//не закончена
 
-
-
-
-
-/*  Тестовая инициализация  */
-
-equations.push(new Equation(4, 4, ">=", 1700));
-equations.push(new Equation(20, 30, ">=", 9600));
-// equations.push(new Equation(0.2, 0.3, "<=", 1.8)); 
-// equations.push(new Equation(0.2, 0.1, "<=", 1.2));
-// equations.push(new Equation(0.3, 0.3, "<=", 2.4)); 
-equations.push(new Equation(1, 0, ">=", 0));
-equations.push(new Equation(0, 1, ">=", 0));
-
-targetFunction.init(2, 4, "min");
-
-
-//получаем Map линий и их пересечений  
-let bounds = fillBounds(equations);
-
-//последовательные точки пересечений для отрисовки
-let points = getPoints(bounds), extreme;
-
-//находим экстремум, если возможно
-if (!checkInfinite(bounds)) {
-  extreme = getExtreme(points, targetFunction.extreme);
-  console.log(extreme); 
-
-  bounds = fillBounds(normalizedEqs);
-  points = getPoints(bounds);
-
-} else {  
-  normalizedEqs.push(new Equation(1, 0, "<=", 500)); 
-  normalizedEqs.push(new Equation(0, 1, "<=", 500));
-
-  bounds = fillBounds(normalizedEqs);
-  points = getPoints(bounds); 
-  
-  if (targetFunction.extreme === "max") {
-    alert("Максимальное значение ОДР не существует, ввиду её неограниченности");  
-  } else {
-    extreme = getExtreme(points, targetFunction.extreme);
-    console.log(extreme);  
-  }
+  return ratio;
 }
 
+/**
+ * Нормализует точки пересечения линий для построения графика
+ *
+ * @param {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
+ */
+function normaliseGraph(bounds, graphs) {
+  let ratio = getRatio(graphs);
 
+  for (let point of bounds.values()) {
 
+    for (let coord of point.values()) {
+      coord.x1 *= ratio;
+      coord.x2 *= ratio;
+    }
+  }
 
+  for (var i = 0; i < graphs.length; i++) {    
 
+    for (let key in graphs[i]) {
+      let line = graphs[i][key];
+      let largerCoord = line.x1 > line.x2 ? line.x1 : line.x2;
 
+      line.x1 *= ratio;
+      line.x2 *= ratio;
+    }
+  }
+}
+
+/**
+ * Создаём массив линий для отрисовки на основе объекта типа Map
+ *
+ * @param {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
+ * @return {array} graphs массив линий(иерархия: [{point1: {x1, x2}, point2:{x1, x2}}].
+ */
+// function getGraphs(bounds) {
+//   let graphs = [];
+
+//   for (let point of bounds.values()) {
+//     let coords = {}
+    
+//     for (let coord of point.values()) {
+//       if (coords.point1) {
+//         coords.point2 = coord; 
+//       } else {
+//         coords.point1 = coord; 
+//       }
+//     }
+
+//     graphs.push(coords);
+//   }
+
+//   return graphs;
+// }
 
