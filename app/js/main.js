@@ -1,12 +1,11 @@
 /*
   * Кнопка подготовки и запуска просчетов
   */
-  let preparator = document.getElementById('preparator'),
-  runner = document.getElementById('runner');
+let preparator = document.getElementById('preparator'),
+    runner = document.getElementById('runner');
 
-  preparator.onclick = prepare; 
-
-  runner.onclick = run;
+preparator.onclick = prepare; 
+runner.onclick = run;
 
 /* Шаблон для ограничений */
 let template = 
@@ -25,18 +24,15 @@ let mainHTML = document.querySelector('main');
   };
 
 /**
-  * Создает заданное количество элементов для ограничений
-  */
-  function prepare(e) {
-  // e.preventDefault();
+ * Создает заданное количество элементов для ограничений
+ */
+function prepare(e) {
 
-  // количество ограничений
-  let amount = +(con_amount.options[con_amount.selectedIndex].value);
-
+  let constraintsAmount = +(con_amount.options[con_amount.selectedIndex].value);
   // устанавливаем количество ограничений (нужно будет для извлечения данных из них)
-  main.constraints = amount;
+  main.constraints = constraintsAmount;
 
-  for (let i = 0; i < amount; i++) {
+  for (let i = 0; i < constraintsAmount; i++) {
     constraints.innerHTML += template; 
   }
   preparation.remove();
@@ -46,135 +42,112 @@ let mainHTML = document.querySelector('main');
 /* Initialization */
 
 /**
-  * Запускает выполнение программы
-  */
-  function run(e) {
-    /* перед инициализацией проверка на заполненность всех нужных input */
-    let inputs = checkData();
+ * Запускает выполнение программы
+ */
+function run() {  
+  /* перед инициализацией проверка на заполненность всех нужных input */
+  let inputs = checkData();
 
-    /** Массив ограничений (уравнений системы ограничения)
-     *
-     */
-    let equations = [];
+  if (inputs) {
+  // добавляем прелоадер на время выполнения просчетов
+  // preloader.style.display = 'block';
 
-    // если input не пустые, то выполняем заполнение главный объект задачи
-    // проходимся по всем input и выбираем нужные по атрибутам
-    if (inputs) {
-      // добавляем прелоадер на время выполнения просчетов
-      // preloader.style.display = 'block';
+  // инициализируем целевую функцию
+  // получаем экстремум (max или min)
+  let extr = ex.options[ex.selectedIndex].value;
 
-      // инициализируем целевую функцию
-      // получаем экстремум (max или min)
-      let extr = ex.options[ex.selectedIndex].value;
+  targetFunction.init(+inputs[0].value, +inputs[1].value, extr);
+  runner.disabled = true;
 
-      targetFunction.init(+inputs[0].value, +inputs[1].value, extr);
+  // показываем скрытый canvas 
+  container.style.visibility = 'visible';
 
-      // runner.disabled = true;
+  /** 
+   * Заполняем массив equation (ограничений)
+   * Для этого получим все элементы содеражащие данные ограничений
+   * ! подумать над тем, чтобы вынести это в отдельную функцию
+   */
+  let cons = document.getElementsByClassName('constraints-item');
 
-      // показываем скрытый canvas 
-      container.style.visibility = 'visible';
+  /** Массив ограничений (уравнений системы ограничения)
+   *
+   */
+  let equations = [];
 
-      /** 
-       * Заполняем массив equation (ограничений)
-       * Для этого получим все элементы содеражащие данные ограничений
-       * ! подумать над тем, чтобы вынести это в отдельную функцию
-       */
-      let cons = document.getElementsByClassName('constraints-item');
+  for (let i = 0; i < cons.length; i++) {
+    // все input данной строки
+    let inputs = cons[i].getElementsByTagName('input'),
+    sign = cons[i].querySelector('.select');
 
-      for (let i = 0; i < cons.length; i++) {
-        // все input данной строки
-        let inputs = cons[i].getElementsByTagName('input'),
-        sign = cons[i].querySelector('.select');
+    // получаем знак ограничения  
+    sign = sign.options[sign.selectedIndex].value;
 
-        // получаем знак ограничения  
-        sign = sign.options[sign.selectedIndex].value;
+    // данные ограничения
+    let [x1, x2, value] = inputs;
 
-        // данные ограничения
-        let [x1, x2, value] = inputs;
+    equations.push(new Equation(+x1.value, +x2.value, sign, +value.value));
+  }
 
-        equations.push(
-          new Equation(+x1.value, +x2.value, sign, +value.value)
-        );
-      }
+  // ограничения осей
+  equations.push(new Equation(1, 0, ">=", 0));
+  equations.push(new Equation(0, 1, ">=", 0));
 
-    equations.push(new Equation(1, 0, ">=", 0));
-    equations.push(new Equation(0, 1, ">=", 0));
+  /* Продолжаем вакханалию */
 
-    /* Продолжаем вакханалию */
-    
-    //получаем Map линий и их пересечений для подсчёта экстремума  
-    let bounds = fillBounds(equations);
+  //получаем Map линий и их пересечений для подсчёта экстремума  
+  let bounds = fillBounds(equations);
+  let points = getPoints(bounds);
 
-    let points = [];
-    if (!isEmptyMap(bounds)) {
-      points = getPoints(bounds);      
-    }  
+  //получаем координаты линий, будем пересчитывать для того, чтобы уместились в область
+  //канваса (500;500)
+  let graphs = getStarterGraphs(equations);
 
-    //получаем координаты линий, будем пересчитывать для того, чтобы уместились в область
-    //канваса (500;500)
-    let graphs = getStarterGraphs(equations);
-    console.log(graphs);
+  if (points.length == 0) {    
+    normaliseGraphs(graphs);
+    alert("Ограничения не имеют общих точек");
+  } else if (points.length == 1) {
+    showExtrem(points, targetFunction.extreme);
 
-    if (points.length == 0) {
-      // нормализация точек пересечения 
-      normaliseGraph(bounds, graphs);     
-      alert("Ограничения не имеют общих точек");
-    } else if (points.length == 1) {
+    normaliseBounds(bounds, graphs);     
+    normaliseGraphs(graphs);
+    alert("ОДР представляет собой единственную точку");
+  } else if (points.length == 2) {
+    showExtrem(points, targetFunction.extreme);
+
+    normaliseBounds(bounds, graphs);     
+    normaliseGraphs(graphs);
+    alert("ОДР представляет собой линию(2 точки на графике)");
+  } else if (!checkInfinite(equations)) {
+    showExtrem(points, targetFunction.extreme); 
+       
+    normaliseBounds(bounds, graphs);     
+    normaliseGraphs(graphs);
+    const newPoints = getPoints(bounds);
+
+    fillArea(newPoints);
+  } else {  
+    if (targetFunction.extreme === "max") {   
+      normaliseGraphs(graphs);
+
+      const newEquations = getNewEquations(graphs),
+        newBounds = getNewBounds(newEquations);        
+
+      //точки для построения ОДР
+      const newPoints = getPoints(newBounds);
+      fillArea(newPoints);       
+      alert("Максимальное значение ОДР не существует, ввиду её неограниченности");  
+    } else {
       showExtrem(points, targetFunction.extreme);
+      normaliseGraphs(graphs);
+      
+      const newEquations = getNewEquations(graphs),
+        newBounds = getNewBounds(newEquations);        
 
-      // нормализация точек пересечения 
-      normaliseGraph(bounds, graphs); 
-      alert("ОДР представляет собой единственную точку");
-    } else if (points.length == 2) {
-      showExtrem(points, targetFunction.extreme);
-
-      // нормализация точек пересечения 
-      normaliseGraph(bounds, graphs);
-      alert("ОДР представляет собой линию(2 точки на графике)");
-      //Если не бесконечна ОДР наша
-    } else if (!checkInfinite(equations)) {
-      showExtrem(points, targetFunction.extreme);
-
-      // нормализация точек пересечения 
-      normaliseGraph(bounds, graphs);
-      points = getPoints(bounds);
-      fillArea(points);
-    } else {  
-
-      if (targetFunction.extreme === "max") {   
-        // нормализация точек пересечения 
-        normaliseGraph(bounds, graphs);
-        //создание новых уравнений на основе нормализованных линий
-        let newEquations = getNewEquations(graphs);
-        newEquations.push(new Equation(1, 0, ">=", 0));
-        newEquations.push(new Equation(0, 1, ">=", 0));
-        //Если ОДР бесконечна, что добавляем 2 фиктивных ограничения, для её отрисовки и пересчитываем точки пересечения
-        //Теперь, если есть пересечение с фиктивными осями, они у нас отражены в bounds
-        bounds = getNewBounds(bounds, newEquations);        
-
-        //точки для построения ОДР
-        points = getPoints(bounds); 
-        fillArea(points);        
-        alert("Максимальное значение ОДР не существует, ввиду её неограниченности");  
-      } else {
-        showExtrem(points, targetFunction.extreme);
-
-        // нормализация точек пересечения 
-        normaliseGraph(bounds, graphs);
-        //создание новых уравнений на основе нормализованных линий
-        let newEquations = getNewEquations(graphs);
-        console.log(newEquations);
-        newEquations.push(new Equation(1, 0, ">=", 0));
-        newEquations.push(new Equation(0, 1, ">=", 0));
-        //Если ОДР бесконечна, что добавляем 2 фиктивных ограничения, для её отрисовки и пересчитываем точки пересечения
-        //Теперь, если есть пересечение с фиктивными осями, они у нас отражены в bounds
-        bounds = getNewBounds(bounds, newEquations);        
-
-        //точки для построения ОДР
-        points = getPoints(bounds);
-        fillArea(points);
-      }
+      //точки для построения ОДР
+      const newPoints = getPoints(newBounds);
+      fillArea(newPoints);              
     }
+  }
 
     // рисуем прямые, используя массив объектов Graph
     for (let i = 0; i < graphs.length; i++) {
@@ -211,8 +184,8 @@ let mainHTML = document.querySelector('main');
   /* массив решения */
   function showAnswer(solution) {
     let x1 = document.querySelector('.x1'),
-    x2 = document.querySelector('.x2'),
-    target = document.querySelector('.target-value');
+      x2 = document.querySelector('.x2'),
+      target = document.querySelector('.target-value');
 
     x1.innerHTML = solution[0].x1;
     x2.innerHTML = solution[0].x2;
