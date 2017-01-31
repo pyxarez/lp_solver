@@ -2,11 +2,58 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>project</title>
+	<title>Linear Programming</title>
 	<link rel="stylesheet" href="css/main.css">
-	<script defer src="js/script.js"></script>
+	<link rel="stylesheet" href="css/preloader.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="js/math.js" defer></script>
+	<script src="js/draw.js" defer></script>
+	<script src="js/main.js" defer></script>
 </head>
+<style>
+</style>
 <body>
-
+	<main class="main">
+		<div class="form">
+			<div class="target">
+				<span>Z(X) = </span> 
+				<input type="text" name="x1" class="input" required autofocus>
+				<span>x<sub>1</sub></span>
+				<span>+</span>
+				<input type="text" name="x2" class="input" required autofocus>
+				<span>x<sub>2</sub></span>
+				<span>&#10139;</span>
+				<select id="ex" class="select">
+					<option value="max">max</option>
+					<option value="min">min</option>
+				</select>
+			</div>
+			<div id="preparation">
+				<p>Количество ограничений:</p>
+				<select id="con_amount" class="select">
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+				</select>
+				<button class="btn btn__green" id="preparator">Далее</button>
+			</div>
+			<div id="constraints"></div>
+			<button class="btn btn__green" id="runner">Вычислить</button> 
+		</div>	
+		<div id="container">
+			<canvas id="graph" height="500" width="500"></canvas>
+			<div class="answer">
+				<span>Ответ: </span>
+				<span>X*(</span>
+				<span class="x1"></span>
+				<span>,</span>
+				<span class="x2"></span>
+				<span>  </span>
+				<span>) = </span>
+				<span class="target-value"></span>
+			</div>
+		</div>
+	</main>
 </body>
 </html>

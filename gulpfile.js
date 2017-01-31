@@ -3,10 +3,10 @@ sass = require('gulp-sass'),
 browserSync = require('browser-sync');
 
 gulp.task('sass', () => { 
-	return gulp.src('app/scss/**/*.scss')
+	return gulp.src('app/sass/**/*.scss')
 	.pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
 	.pipe(gulp.dest('app/css'))
-	.pipe(browserSync.reload({stream: true}));		
+	.pipe(browserSync.reload());		
 });
 
 gulp.task('browser-sync', () => {
@@ -15,13 +15,13 @@ gulp.task('browser-sync', () => {
 			baseDir: 'app'
 		},
 		port: 8080,
-		tunnel: "sanchez",
+		tunnel: "mixalezhnev",
 		notify: false
 	});
 });
 
 gulp.task('watch', ["browser-sync", "sass"], () => {
-	gulp.watch('app/scss/**/*.scss', ['sass']);
+	gulp.watch('app/sass/**/*.scss', ['sass', browserSync.reload]);
 	gulp.watch('app/*.html', browserSync.reload);
 	gulp.watch('app/js/**/*.js', browserSync.reload);
 });
