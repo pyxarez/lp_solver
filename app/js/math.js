@@ -515,10 +515,8 @@ return values;
 /**
  * Функция получения новых уравнений для построения правильной неограниченной ОДР
  *
- * @param {} .
- * @param {} .
- * @param {} .
- * @return {number} .
+ * @param {array} graphs массив объектов типа Graph, содержащий координаты прямых.
+ * @return {array} equations уравнения построенные на основе координат прямых.
  */
 function getNewEquations(graphs) {
   let equations = [];
