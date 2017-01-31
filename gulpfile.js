@@ -6,7 +6,7 @@ gulp.task('sass', () => {
 	return gulp.src('app/sass/**/*.scss')
 	.pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
 	.pipe(gulp.dest('app/css'))
-	.pipe(browserSync.reload());		
+	.pipe(browserSync.reload({stream: true}));		
 });
 
 gulp.task('browser-sync', () => {
@@ -15,13 +15,13 @@ gulp.task('browser-sync', () => {
 			baseDir: 'app'
 		},
 		port: 8080,
-		tunnel: "mixalezhnev",
+		tunnel: "sanchez",
 		notify: false
 	});
 });
 
 gulp.task('watch', ["browser-sync", "sass"], () => {
-	gulp.watch('app/sass/**/*.scss', ['sass', browserSync.reload]);
+	gulp.watch('app/sass/**/*.scss', ['sass']);
 	gulp.watch('app/*.html', browserSync.reload);
 	gulp.watch('app/js/**/*.js', browserSync.reload);
 });

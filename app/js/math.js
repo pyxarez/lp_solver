@@ -71,7 +71,6 @@ class reverseEquation {
  */
  function computeX2(con1, con2) {
   let number = con1.value - (con2.value * con1.x1 / con2.x1);
-
   let x2 = number * con2.x1 / (-con2.x2 * con1.x1 + con2.x1 * con1.x2); 
 
   return +x2.toFixed(3); 
@@ -132,7 +131,7 @@ class reverseEquation {
     con2 = temp;
   }
 
-  // Если второе ограничение уравнение оси х2 
+  // Если второе ограничение уравнение оси х2 или правой оси
   if (con2.x1 == 1 && con2.value == 0 || con2.x1 == 1 && con2.value == 500) {
     x1 = con2.value;
     x2 = computeX2ByX1(con1, x1);

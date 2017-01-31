@@ -1,12 +1,11 @@
 /*
   * Кнопка подготовки и запуска просчетов
   */
-  let preparator = document.getElementById('preparator'),
-  runner = document.getElementById('runner');
+let preparator = document.getElementById('preparator'),
+    runner = document.getElementById('runner');
 
-  preparator.onclick = prepare; 
-
-  runner.onclick = run;
+preparator.onclick = prepare; 
+runner.onclick = run;
 
 /* Шаблон для ограничений */
 let template = 
@@ -25,18 +24,16 @@ let mainHTML = document.querySelector('main');
   };
 
 /**
-  * Создает заданное количество элементов для ограничений
-  */
-  function prepare(e) {
+ * Создает заданное количество элементов для ограничений
+ */
+function prepare(e) {
   // e.preventDefault();
 
-  // количество ограничений
-  let amount = +(con_amount.options[con_amount.selectedIndex].value);
-
+  let constraintsAmount = +(con_amount.options[con_amount.selectedIndex].value);
   // устанавливаем количество ограничений (нужно будет для извлечения данных из них)
-  main.constraints = amount;
+  main.constraints = constraintsAmount;
 
-  for (let i = 0; i < amount; i++) {
+  for (let i = 0; i < constraintsAmount; i++) {
     constraints.innerHTML += template; 
   }
   preparation.remove();
@@ -46,42 +43,39 @@ let mainHTML = document.querySelector('main');
 /* Initialization */
 
 /**
-  * Запускает выполнение программы
-  */
-  function run(e) {
-    /* перед инициализацией проверка на заполненность всех нужных input */
-    let inputs = checkData();
+ * Запускает выполнение программы
+ */
+function run(e) {  
+  /* перед инициализацией проверка на заполненность всех нужных input */
+  let inputs = checkData();
 
-    /** Массив ограничений (уравнений системы ограничения)
-     *
-     */
+  if (inputs) {
+  // добавляем прелоадер на время выполнения просчетов
+  // preloader.style.display = 'block';
+
+  // инициализируем целевую функцию
+  // получаем экстремум (max или min)
+  let extr = ex.options[ex.selectedIndex].value;
+
+  targetFunction.init(+inputs[0].value, +inputs[1].value, extr);
+  runner.disabled = true;
+
+  // показываем скрытый canvas 
+  container.style.visibility = 'visible';
+
+  /** 
+    * Заполняем массив equation (ограничений)
+    * Для этого получим все элементы содеражащие данные ограничений
+    * ! подумать над тем, чтобы вынести это в отдельную функцию
+    */
+    let cons = document.getElementsByClassName('constraints-item');
+
+  /** Массив ограничений (уравнений системы ограничения)
+    *
+    */
     let equations = [];
 
-    // если input не пустые, то выполняем заполнение главный объект задачи
-    // проходимся по всем input и выбираем нужные по атрибутам
-    if (inputs) {
-      // добавляем прелоадер на время выполнения просчетов
-      // preloader.style.display = 'block';
-
-      // инициализируем целевую функцию
-      // получаем экстремум (max или min)
-      let extr = ex.options[ex.selectedIndex].value;
-
-      targetFunction.init(+inputs[0].value, +inputs[1].value, extr);
-
-      // runner.disabled = true;
-
-      // показываем скрытый canvas 
-      container.style.visibility = 'visible';
-
-      /** 
-       * Заполняем массив equation (ограничений)
-       * Для этого получим все элементы содеражащие данные ограничений
-       * ! подумать над тем, чтобы вынести это в отдельную функцию
-       */
-      let cons = document.getElementsByClassName('constraints-item');
-
-      for (let i = 0; i < cons.length; i++) {
+       for (let i = 0; i < cons.length; i++) {
         // все input данной строки
         let inputs = cons[i].getElementsByTagName('input'),
         sign = cons[i].querySelector('.select');
@@ -94,14 +88,14 @@ let mainHTML = document.querySelector('main');
 
         equations.push(
           new Equation(+x1.value, +x2.value, sign, +value.value)
-        );
+          );
       }
 
-    equations.push(new Equation(1, 0, ">=", 0));
-    equations.push(new Equation(0, 1, ">=", 0));
+      equations.push(new Equation(1, 0, ">=", 0));
+      equations.push(new Equation(0, 1, ">=", 0));
 
-    /* Продолжаем вакханалию */
-    
+      /* Продолжаем вакханалию */
+
     //получаем Map линий и их пересечений для подсчёта экстремума  
     let bounds = fillBounds(equations);
 
@@ -113,7 +107,6 @@ let mainHTML = document.querySelector('main');
     //получаем координаты линий, будем пересчитывать для того, чтобы уместились в область
     //канваса (500;500)
     let graphs = getStarterGraphs(equations);
-    console.log(graphs);
 
     if (points.length == 0) {
       // нормализация точек пересечения 
@@ -163,7 +156,6 @@ let mainHTML = document.querySelector('main');
         normaliseGraph(bounds, graphs);
         //создание новых уравнений на основе нормализованных линий
         let newEquations = getNewEquations(graphs);
-        console.log(newEquations);
         newEquations.push(new Equation(1, 0, ">=", 0));
         newEquations.push(new Equation(0, 1, ">=", 0));
         //Если ОДР бесконечна, что добавляем 2 фиктивных ограничения, для её отрисовки и пересчитываем точки пересечения
