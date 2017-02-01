@@ -97,71 +97,61 @@ function run(e) {
   //получаем Map линий и их пересечений для подсчёта экстремума  
   let bounds = fillBounds(equations);
 
-  let points = [];
-  if (!isEmptyMap(bounds)) {
-    points = getPoints(bounds);      
-  }  
+  // let points = [];
+  // if (!isEmptyMap(bounds)) {
+  //   points = getPoints(bounds);      
+  // }  
+  let points = getPoints(bounds);
 
   //получаем координаты линий, будем пересчитывать для того, чтобы уместились в область
   //канваса (500;500)
   let graphs = getStarterGraphs(equations);
 
   if (points.length == 0) {
-    normaliseGraph(bounds, graphs);     
+    normaliseBounds(bounds, graphs);     
+    normaliseGraphs(graphs);
     alert("Ограничения не имеют общих точек");
   } else if (points.length == 1) {
     showExtrem(points, targetFunction.extreme);
 
-    // нормализация точек пересечения и линий для отрисовки 
-    normaliseGraph(bounds, graphs); 
+    normaliseBounds(bounds, graphs);     
+    normaliseGraphs(graphs);
     alert("ОДР представляет собой единственную точку");
   } else if (points.length == 2) {
     showExtrem(points, targetFunction.extreme);
 
-    // нормализация точек пересечения и линий для отрисовки 
-    normaliseGraph(bounds, graphs);
+    normaliseBounds(bounds, graphs);     
+    normaliseGraphs(graphs);
     alert("ОДР представляет собой линию(2 точки на графике)");
-      //Если не бесконечна ОДР наша
-    } else if (!checkInfinite(equations)) {
-      showExtrem(points, targetFunction.extreme);
+  } else if (!checkInfinite(equations)) {
+    showExtrem(points, targetFunction.extreme); 
+       
+    normaliseBounds(bounds, graphs);     
+    normaliseGraphs(graphs);
+    const newPoints = getPoints(bounds);
 
-    // нормализация точек пересечения и линий для отрисовки 
-    normaliseGraph(bounds, graphs);
-    points = getPoints(bounds);
-    fillArea(points);
+    fillArea(newPoints);
   } else {  
     if (targetFunction.extreme === "max") {   
-      // нормализация точек пересечения и линий для отрисовки 
-      normaliseGraph(bounds, graphs);
-      //создание новых уравнений на основе нормализованных линий
-      let newEquations = getNewEquations(graphs);
-      newEquations.push(new Equation(1, 0, ">=", 0));
-      newEquations.push(new Equation(0, 1, ">=", 0));
-      //Если ОДР бесконечна, что добавляем 2 фиктивных ограничения, для её отрисовки и пересчитываем точки пересечения
-      //Теперь, если есть пересечение с фиктивными осями, они у нас отражены в bounds
-      bounds = getNewBounds(bounds, newEquations);        
+      normaliseGraphs(graphs);
+
+      const newEquations = getNewEquations(graphs),
+        newBounds = getNewBounds(newEquations);        
 
       //точки для построения ОДР
-      points = getPoints(bounds); 
-      fillArea(points);        
+      const newPoints = getPoints(newBounds);
+      fillArea(newPoints);       
       alert("Максимальное значение ОДР не существует, ввиду её неограниченности");  
     } else {
       showExtrem(points, targetFunction.extreme);
-
-      // нормализация точек пересечения и линий для отрисовки 
-      normaliseGraph(bounds, graphs);
-
-      //создание новых уравнений на основе нормализованных линий
-      let newEquations = getNewEquations(graphs);
-      newEquations.push(new Equation(1, 0, ">=", 0));
-      newEquations.push(new Equation(0, 1, ">=", 0));
-      //Если ОДР бесконечна, что добавляем 2 фиктивных ограничения, для её отрисовки и пересчитываем точки пересечения
-      //Теперь, если есть пересечение с фиктивными осями, они у нас отражены в bounds
-      bounds = getNewBounds(bounds, newEquations);        
+      normaliseGraphs(graphs);
+      
+      const newEquations = getNewEquations(graphs),
+        newBounds = getNewBounds(newEquations);        
 
       //точки для построения ОДР
-      points = getPoints(bounds);
-      fillArea(points);
+      const newPoints = getPoints(newBounds);
+      fillArea(newPoints);              
     }
   }
 
@@ -200,8 +190,8 @@ function run(e) {
   /* массив решения */
   function showAnswer(solution) {
     let x1 = document.querySelector('.x1'),
-    x2 = document.querySelector('.x2'),
-    target = document.querySelector('.target-value');
+      x2 = document.querySelector('.x2'),
+      target = document.querySelector('.target-value');
 
     x1.innerHTML = solution[0].x1;
     x2.innerHTML = solution[0].x2;

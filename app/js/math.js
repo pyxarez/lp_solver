@@ -92,7 +92,7 @@ function computeX1(con1, x2) {
  * Вычилсяет х2 при известном х1, нужно для просчёта пересечений с осью х1 = 0(вертикальной) 
  * или с правой фиктивной осью x1 = 500. 
  * Удобно, так как х1 в первом случае всегда 0, а во втором 500
- * и его не нужно просчитывать,
+ * и его не нужно просчитывать
  *
  * @param {object} con1 первое уравнение(ограничение).
  * @param {number} x1 значение переменной х1 для системы уравнений.
@@ -121,7 +121,8 @@ function getX1AndX2(con1, con2) {
 
   // Если первый аргумент ограничение оси, то меняем его со вторым аргументом,
   // удобно для для того, чтобы не менять
-  // логику счёта х1 и х2(i.e. второй аргумент всегда ось теперь) 
+  // логику счёта х1 и х2(i.e. второй аргумент всегда ось теперь, кроме случаев, когда
+  // пришло 2 ограничения обычных(не осей)) 
   if (con1.x1 == 1 && con1.value == 0 ||
       con1.x2 == 1 && con1.value == 0 ||
       con1.x1 == 1 && con1.value == 500 ||
@@ -166,11 +167,9 @@ function checkBelongingTo(con, x1, x2) {
     "<=" : function(con, x1, x2) {
       return computedValue <= con.value ? false : true;
     },
-
     ">=" : function(con, x1, x2) {
       return computedValue >= con.value ? false : true;
     },
-
     "=" : function(con, x1, x2) {
       return computedValue == con.value ? false : true;
     }
@@ -190,7 +189,7 @@ function checkBelongingTo(con, x1, x2) {
  function isBellongingToAllEquations(eqs, x1, x2) {
   for (let h = 0; h < eqs.length; h++) {
 
-    if (checkBelongingTo(eqs[h], x1, x2)) {
+    if ( checkBelongingTo(eqs[h], x1, x2) ) {
       return true;
     }
   }
@@ -210,9 +209,9 @@ function checkBelongingTo(con, x1, x2) {
   /* 
    * Объект, хранящий выражения и точки пересечения с другими объектами графика
    */
-   let bounds = new Map();
+  let bounds = new Map();
 
-   for (let i = 0, l = eqs.length; i < l; i++) {    
+  for (let i = 0, l = eqs.length; i < l; i++) {    
 
     for (let j = 0; j < eqs.length; j++) {
       if (j == i) continue;
@@ -220,10 +219,13 @@ function checkBelongingTo(con, x1, x2) {
       const [x1, x2] = getX1AndX2(eqs[i], eqs[j]);
 
       if ( isBellongingToAllEquations(eqs, x1, x2) ) continue;
-      if (!bounds.has(eqs[i])) {
+
+      if ( !bounds.has(eqs[i]) ) {
         bounds.set(eqs[i], new Map());
       }
-      bounds.get(eqs[i]).set(eqs[j], {x1: x1, x2: x2});      
+      bounds
+        .get(eqs[i])
+        .set(eqs[j], {x1: x1, x2: x2});      
     }
   }
 
@@ -232,10 +234,12 @@ function checkBelongingTo(con, x1, x2) {
 
 /**
  * Функция проверки ОДР на ограниченность
- * будет работать, пока кто-нибудь не введёт уравнение задающее прямую, параллельную оси 
+ * будет работать, пока кто-нибудь не введёт уравнение
+ * задающее прямую, параллельную оси 
  *
- * @param {Map} все точки пересечения, на ОДР.
- */
+ * @param {array} equations уравнения ограничений(всех).
+ * @return {boolean}
+   */
  function checkInfinite(equations) {
   for (var i = 0; i < equations.length; i++) {
     if (equations[i].sign === "<=" || equations[i].sign === "=") {
@@ -247,14 +251,18 @@ function checkBelongingTo(con, x1, x2) {
 }
 
 /**
- * Функция подготавливает точки для построения графика
+ * Функция подготавливает точки для построения(закрашивания) ОДР
  *
- * @param {Map} все точки пересечения, на ОДР.
- * @return {array} все точки для закрашивания ОДР(некое подобие отсортированного массива).
+ * @param {Map} bounds все точки пересечения, на ОДР.
+ * @return {array} points все точки для закрашивания ОДР, выстроеннных в правильном порядке.
  */
  function getPoints(bounds) {
-  let points = [];
-  let maps = [];
+  if (isEmptyMap(bounds)) {
+    return [];     
+  }
+
+  let points = [],
+    maps = [];
 
   for (let eq of bounds) {
     maps.push(eq);
@@ -266,31 +274,31 @@ function checkBelongingTo(con, x1, x2) {
 }
 
 /**
- * Рекурсивное заполнение массива объектами, содержащими точки для закрашивания ОДР, каждая из которых расположена в правильном порядке
+ * Рекурсивное заполнение массива объектами, содержащими точки для закрашивания ОДР,
+ * каждая из которых расположена в правильном порядке.
  *
  * @param {array} chain массив объектов, содержащих координатами точек.
  * @param {Map} eq объект типа Map, содержащий выражение(ограничение, линию) и точки пересечения с другими линиями, подходящими под ОДР.
  * @param {Map} объект со всеми Выражениями и соответсвующими им пересечениями.
  */
- function chainPoints(chain, eq, bounds) {
-  let point = eq[1];
+ function chainPoints(points, eq, bounds) {
+  const eqBit = eq[1];
 
-  for (let coords of point) {
+  for (let coords of eqBit) {
+    let isSame = true;
 
-    let isSame = false;
-
-    chain.forEach((point) => {
+    points.forEach((point) => {
       if (point.x1 == coords[1].x1 && point.x2 == coords[1].x2) {
-        isSame = true;
+        isSame = false;
       }
     });
 
-    if (!isSame) {
-      chain.push(coords[1]);
+    if (isSame) {
+      points.push(coords[1]);
 
       for (let bound of bounds) {
         if (bound[0] == coords[0]) {
-          chainPoints(chain, bound, bounds)          
+          chainPoints(points, bound, bounds)          
         }
       }       
     }   
@@ -299,7 +307,8 @@ function checkBelongingTo(con, x1, x2) {
 
 
 /**
- * Функция получения массива значений целевой функции
+ * Создание Map-а в котором будут храниться значения целевой 
+ * функции при заданных х1 и х2
  *
  * @param {array} points точки пересечения, подходящие под ОДР.
  * @return {array} значения целевой функции при заданных х1 и х2.
@@ -327,7 +336,7 @@ function checkBelongingTo(con, x1, x2) {
   let vForP = getValues(points);
 
   let values = [],
-  extreme;
+    extreme;
 
   for (let value of vForP.values()) {
     values.push(value);
@@ -348,6 +357,7 @@ function checkBelongingTo(con, x1, x2) {
 
 /**
  * Функция создаёт стартовые координаты для линий на графике
+ * 
  *
  * @param {array} equations массив ограничений.
  * @return {array} массив линий для отрисовки(будут пересчитаны, в случаевыхода за границы canvas.
@@ -357,8 +367,6 @@ function checkBelongingTo(con, x1, x2) {
 
   for (var i = 0; i < equations.length - 2; i++) {    
     let graph = new Graph(equations[i]);
-    // graph.sign = equations[i].sign;
-    // graph.value = equations[i].value;
     graphs.push(graph);
   }
 
@@ -429,25 +437,16 @@ function checkBelongingTo(con, x1, x2) {
   return ratio;
 }
 
-
 /**
- * Нормализует точки bounds(map точек пересечений и линий,
- * которые в этих точках пересекаются) и graps, просто перемнажая каждую координату 
- * на какой-то коэффицент
+ * Нормализуем линии ограничений
  *
- * @param {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
- * @param {array} graphs массив линий, содержащих точки для отрисовки на графике.
+ * @param {} .
+ * @param {} .
+ * @param {} .
+ * @return {number} .
  */
- function normaliseGraph(bounds, graphs) {
-  let ratio = getRatio(graphs);
-
-  for (let point of bounds.values()) {
-
-    for (let coord of point.values()) {
-      coord.x1 *= ratio;
-      coord.x2 *= ratio;
-    }
-  }
+function normaliseGraphs(graphs) {
+  const ratio = getRatio(graphs);
 
   for (var i = 0; i < graphs.length; i++) {    
 
@@ -465,6 +464,27 @@ function checkBelongingTo(con, x1, x2) {
   }
 }
 
+
+/**
+ * Нормализует точки bounds(map точек пересечений и линий,
+ * которые в этих точках пересекаются) и graphs, просто перемнажая каждую координату 
+ * на какой-то коэффицент
+ *
+ * @param {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
+ * @param {array} graphs массив линий, содержащих точки для отрисовки на графике.
+ */
+function normaliseBounds(bounds, graphs) {
+  const ratio = getRatio(graphs);
+
+  for (let point of bounds.values()) {
+
+    for (let coord of point.values()) {
+      coord.x1 *= ratio;
+      coord.x2 *= ratio;
+    }
+  }
+}
+
 /**
  * Функция упрощает повторный пересчёт точек пересечения линий(ограничений), удовлетворяющих
  * ОДР при добавлении двух фиктивных осей(верхней и правой)
@@ -472,11 +492,14 @@ function checkBelongingTo(con, x1, x2) {
  *
  * @param {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
  */
- function getNewBounds(bounds, equations) {
+ function getNewBounds(equations) {  
+  equations.push(new Equation(1, 0, ">=", 0));
+  equations.push(new Equation(0, 1, ">=", 0));
   equations.push(new Equation(1, 0, "<=", 500)); 
   equations.push(new Equation(0, 1, "<=", 500));
 
-  return fillBounds(equations);
+  const newBounds = fillBounds(equations); 
+  return newBounds;
 }
 
 /**
