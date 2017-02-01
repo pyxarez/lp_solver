@@ -59,89 +59,85 @@ class reverseEquation {
   }
 }
 
-
 /*  Вычисляем систему уравнений */
 
 /**
- * Вычисляет значение х2 для состемы уравнений
+ * Вычисляет значение х2 для системы уравнений
  *
  * @param {object} con1 первое уравнение(ограничение).
  * @param {object} con2 второе уравнение(ограничение).
  * @return {number} x2 значение переменной х2.
  */
- function computeX2(con1, con2) {
-  let number = con1.value - (con2.value * con1.x1 / con2.x1);
-  let x2 = number * con2.x1 / (-con2.x2 * con1.x1 + con2.x1 * con1.x2); 
+function computeX2(con1, con2) {
+  const number = con1.value - (con2.value * con1.x1 / con2.x1);
+  const x2 = number * con2.x1 / (-con2.x2 * con1.x1 + con2.x1 * con1.x2); 
 
   return +x2.toFixed(3); 
 }
 
 /**
- * Вычисляет значение х1 для состемы уравнений на основе х2
+ * Вычисляет значение х1 для системы уравнений на основе х2
  *
  * @param {object} con1 первое уравнение(ограничение).
- * @param {number} x1 значение переменной х2 для системы уравнений.
+ * @param {number} x2 значение переменной х2 для системы уравнений.
  * @return {number} x1 значение переменной х1.
  */
- function computeX1(con1, x2) {
-  let x1 = (con1.value - con1.x2 * x2) / con1.x1; 
+function computeX1(con1, x2) {
+  const x1 = (con1.value - con1.x2 * x2) / con1.x1; 
 
   return +x1.toFixed(3); 
 }
 
 /**
- * Вычилсяет х2 при известном х1, нужно для просчёта пересечений с осью х2(вертикальной) 
+ * Вычилсяет х2 при известном х1, нужно для просчёта пересечений с осью х1 = 0(вертикальной) 
+ * или с правой фиктивной осью x1 = 500. 
+ * Удобно, так как х1 в первом случае всегда 0, а во втором 500
+ * и его не нужно просчитывать,
  *
  * @param {object} con1 первое уравнение(ограничение).
  * @param {number} x1 значение переменной х1 для системы уравнений.
  * @return {number} x2 значение переменной х2.
  */
- function computeX2ByX1(con1, x1) {
-  let x2 =  (con1.value - con1.x1 * x1) / con1.x2;
+function computeX2ByX1(con1, x1) {
+  const x2 =  (con1.value - con1.x1 * x1) / con1.x2;
 
   return +x2.toFixed(3);
 }
 
 /**
- * Функция вычисления х1 и х2, решает какой тип системы уравнений(пряма и ось х1, прямая и прямая, ось х2) и выполняет соответсвующие дествие
+ * Функция вычисления х1 и х2, решает какой тип системы уравнений(пряма и ось, прямая и прямая) и выполняет соответсвующие дествие
  * 
- * Первый условный оператор - ось х1, т.е. х1 = 0 и ограничение
- * Второй условный оператор - ось х2, т.е. х2 = 0 и ограничение
+ * Первый условный оператор - если второй аргумент ось(х1 == 0 или х1 == 500).
+ * Второй условный оператор - если второй аргумент ось(х2 == 0 или х2 == 500).
  * Третий условный оператор - ограничение и ограничение
- * Четвёртый условный оператор - ось и ось
  *
  * @param {object} con1 ограничение 1.
  * @param {object} con2 ограничение 2.
  * @return {array} значения х1 и х2 при заданных ограничениях.
  */
- function getX1AndX2(con1, con2) {
-  let values = [];
+function getX1AndX2(con1, con2) {
+  const values = [];
   let x1, x2;
 
   // Если первый аргумент ограничение оси, то меняем его со вторым аргументом,
   // удобно для для того, чтобы не менять
-  // логику счёта х1 и х2 
+  // логику счёта х1 и х2(i.e. второй аргумент всегда ось теперь) 
   if (con1.x1 == 1 && con1.value == 0 ||
-    con1.x2 == 1 && con1.value == 0 ||
-    con1.x1 == 1 && con1.value == 500 ||
-    con1.x2 == 1 && con1.value == 500) 
+      con1.x2 == 1 && con1.value == 0 ||
+      con1.x1 == 1 && con1.value == 500 ||
+      con1.x2 == 1 && con1.value == 500) 
   {
     let temp = con1;
     con1 = con2;
     con2 = temp;
   }
 
-  // Если второе ограничение уравнение оси х2 или правой оси
   if (con2.x1 == 1 && con2.value == 0 || con2.x1 == 1 && con2.value == 500) {
     x1 = con2.value;
     x2 = computeX2ByX1(con1, x1);
-
-    // Если второе ограничение уравнение оси х1
   } else if (con2.x2 == 1 && con2.value == 0 || con2.x2 == 1 && con2.value == 500) {
     x2 = con2.value;
     x1 = computeX1(con1, x2);
-
-    // Если оба ограничения уравнения прямых
   } else {
     x2 = computeX2(con1, con2);
     x1 = computeX1(con1, x2);
@@ -149,33 +145,35 @@ class reverseEquation {
 
   values.push(x1);
   values.push(x2);
-// 
-return values;
+
+  return values;
 }
 
 /**
  * Функция проверки принадлежности точки к ОДР конекретного ограничения
+ * Подставляет х1 и х2 в уравнение ограничения и смотрить удовлетворяется
+ * ли условие ограничения
  *
  * @param {object} con ограничение(выражение).
  * @param {number} x1 значение х1 для ограничения.
  * @param {number} х2 значение х2 для ограничение.
- * @return {bool} возращается результат проверки на принадлежность к одр для ограниченния.
+ * @return {bool} возращается результат проверки на принадлежность к ОДР для ограниченния.
  */
- function checkBelongingTo(con, x1, x2) {
-  let computedValue = +(con.x1 * x1 + con.x2 * x2).toFixed(2);
+function checkBelongingTo(con, x1, x2) {
+  const computedValue = +(con.x1 * x1 + con.x2 * x2).toFixed(2);
 
-  let signs = {
+  const signs = {
     "<=" : function(con, x1, x2) {
-      return computedValue <= con.value ? true : false;
+      return computedValue <= con.value ? false : true;
     },
 
     ">=" : function(con, x1, x2) {
-      return computedValue >= con.value ? true : false;
+      return computedValue >= con.value ? false : true;
     },
 
     "=" : function(con, x1, x2) {
-      return computedValue == con.value ? true : false;
-    },
+      return computedValue == con.value ? false : true;
+    }
   }
 
   return signs[con.sign](con, x1, x2);
@@ -192,16 +190,18 @@ return values;
  function isBellongingToAllEquations(eqs, x1, x2) {
   for (let h = 0; h < eqs.length; h++) {
 
-    if (!checkBelongingTo(eqs[h], x1, x2)) {
-      return false;
+    if (checkBelongingTo(eqs[h], x1, x2)) {
+      return true;
     }
   }
 
-  return true;
+  return false;
 }
 
 /**
- * Заполняет Map точками пересечений, подходящими под наш ОДР
+ * Заполняет Map точками пересечений, подходящими под наш ОДР.
+ * Находит точку пересечения, проверяет принадлежность, если принадлежит
+ * всем ограничениям, записывает в Map
  *
  * @param {object} eqs массив ограничений нашей задачи.
  * @return {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
@@ -214,24 +214,19 @@ return values;
 
    for (let i = 0, l = eqs.length; i < l; i++) {    
 
-    outer:
     for (let j = 0; j < eqs.length; j++) {
       if (j == i) continue;
 
-      let [x1, x2] = getX1AndX2(eqs[i], eqs[j]);
+      const [x1, x2] = getX1AndX2(eqs[i], eqs[j]);
 
-      if (!isBellongingToAllEquations(eqs, x1, x2)) continue;          
-
-      // Условие при котором ограничение(+точки в которых оно пересекается с другими)
-      // создаётся записывается в bounds(Map ограничение) только если у него есть 
-      // хоть одно пересечение с другими линиями
+      if ( isBellongingToAllEquations(eqs, x1, x2) ) continue;
       if (!bounds.has(eqs[i])) {
         bounds.set(eqs[i], new Map());
       }
-
       bounds.get(eqs[i]).set(eqs[j], {x1: x1, x2: x2});      
     }
   }
+
   return bounds;
 }
 
@@ -282,24 +277,22 @@ return values;
 
   for (let coords of point) {
 
-    if (!(~chain.indexOf(coords[1]))) {
-      let isSame = false;
+    let isSame = false;
 
-      chain.forEach((point) => {
-        if (point.x1 == coords[1].x1 && point.x2 == coords[1].x2) {
-          isSame = true;
+    chain.forEach((point) => {
+      if (point.x1 == coords[1].x1 && point.x2 == coords[1].x2) {
+        isSame = true;
+      }
+    });
+
+    if (!isSame) {
+      chain.push(coords[1]);
+
+      for (let bound of bounds) {
+        if (bound[0] == coords[0]) {
+          chainPoints(chain, bound, bounds)          
         }
-      });
-
-      if (!isSame) {
-        chain.push(coords[1]);
-
-        for (let bound of bounds) {
-          if (bound[0] == coords[0]) {
-            chainPoints(chain, bound, bounds)          
-          }
-        }
-      }   
+      }       
     }   
   }  
 }
@@ -399,7 +392,7 @@ return values;
 /**
  * Вычисляет коэффицент на который будут помножены координаты каждой из точек пересечения
  *
- * @param {Map} graphs Map ограничений и их пересечений, удовлетворящих ОДР.
+ * @param {array} graphs массив линий, содержащих точки для отрисовки на графике.
  * @return {number} ratio коэффицент умножения.
  */
  function getRatio(graphs) {
@@ -438,9 +431,12 @@ return values;
 
 
 /**
- * Нормализует точки пересечения линий для построения графика
+ * Нормализует точки bounds(map точек пересечений и линий,
+ * которые в этих точках пересекаются) и graps, просто перемнажая каждую координату 
+ * на какой-то коэффицент
  *
  * @param {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
+ * @param {array} graphs массив линий, содержащих точки для отрисовки на графике.
  */
  function normaliseGraph(bounds, graphs) {
   let ratio = getRatio(graphs);
