@@ -96,19 +96,13 @@ function run(e) {
 
   //получаем Map линий и их пересечений для подсчёта экстремума  
   let bounds = fillBounds(equations);
-
-  // let points = [];
-  // if (!isEmptyMap(bounds)) {
-  //   points = getPoints(bounds);      
-  // }  
   let points = getPoints(bounds);
 
   //получаем координаты линий, будем пересчитывать для того, чтобы уместились в область
   //канваса (500;500)
   let graphs = getStarterGraphs(equations);
 
-  if (points.length == 0) {
-    normaliseBounds(bounds, graphs);     
+  if (points.length == 0) {    
     normaliseGraphs(graphs);
     alert("Ограничения не имеют общих точек");
   } else if (points.length == 1) {

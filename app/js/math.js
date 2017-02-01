@@ -72,7 +72,10 @@ function computeX2(con1, con2) {
   const number = con1.value - (con2.value * con1.x1 / con2.x1);
   const x2 = number * con2.x1 / (-con2.x2 * con1.x1 + con2.x1 * con1.x2); 
 
-  return +x2.toFixed(3); 
+  return (Math.round(x2 * 1000) / 1000 );
+  // return ~~x2;
+  // return Math.ceil(x2);
+  // return +x2.toFixed(11); 
 }
 
 /**
@@ -85,7 +88,10 @@ function computeX2(con1, con2) {
 function computeX1(con1, x2) {
   const x1 = (con1.value - con1.x2 * x2) / con1.x1; 
 
-  return +x1.toFixed(3); 
+  return (Math.round(x1 * 1000) / 1000 );
+  // return ~~x1;
+  // return Math.ceil(x1);
+  // return +x1.toFixed(11); 
 }
 
 /**
@@ -101,7 +107,10 @@ function computeX1(con1, x2) {
 function computeX2ByX1(con1, x1) {
   const x2 =  (con1.value - con1.x1 * x1) / con1.x2;
 
-  return +x2.toFixed(3);
+  return (Math.round(x2 * 1000) / 1000 );
+  // return ~~x2;
+  // return Math.ceil(x2);
+  // return +x2.toFixed(11);
 }
 
 /**
@@ -161,7 +170,10 @@ function getX1AndX2(con1, con2) {
  * @return {bool} возращается результат проверки на принадлежность к ОДР для ограниченния.
  */
 function checkBelongingTo(con, x1, x2) {
-  const computedValue = +(con.x1 * x1 + con.x2 * x2).toFixed(2);
+  const computedValue = (Math.round((con.x1 * x1 + con.x2 * x2) * 1000) / 1000 );
+  // const computedValue = ~~(con.x1 * x1 + con.x2 * x2);
+  // const computedValue = Math.ceil(con.x1 * x1 + con.x2 * x2);
+  // const computedValue = +(con.x1 * x1 + con.x2 * x2).toFixed(11);
 
   const signs = {
     "<=" : function(con, x1, x2) {
