@@ -183,11 +183,9 @@ function run() {
 
   /* массив решения */
   function showAnswer(solution) {
-    // -элемент куда будет выводиться решение задачи
     let answerEl = document.querySelector('.answer');
 
     let answer = `Ответ: X*(${solution[0].x1}, ${solution[0].x2}) = ${solution[1]}`;
-
     answerEl.innerHTML = answer;
   }
 
