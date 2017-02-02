@@ -27,7 +27,6 @@ let mainHTML = document.querySelector('main');
  * Создает заданное количество элементов для ограничений
  */
 function prepare(e) {
-  // e.preventDefault();
 
   let constraintsAmount = +(con_amount.options[con_amount.selectedIndex].value);
   // устанавливаем количество ограничений (нужно будет для извлечения данных из них)
@@ -45,7 +44,7 @@ function prepare(e) {
 /**
  * Запускает выполнение программы
  */
-function run(e) {  
+function run() {  
   /* перед инициализацией проверка на заполненность всех нужных input */
   let inputs = checkData();
 
@@ -89,6 +88,7 @@ function run(e) {
     equations.push(new Equation(+x1.value, +x2.value, sign, +value.value));
   }
 
+  // ограничения осей
   equations.push(new Equation(1, 0, ">=", 0));
   equations.push(new Equation(0, 1, ">=", 0));
 
