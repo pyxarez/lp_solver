@@ -183,12 +183,11 @@ function run() {
 
   /* массив решения */
   function showAnswer(solution) {
-    let x1 = document.querySelector('.x1'),
-      x2 = document.querySelector('.x2'),
-      target = document.querySelector('.target-value');
+    // -элемент куда будет выводиться решение задачи
+    let answerEl = document.querySelector('.answer');
 
-    x1.innerHTML = solution[0].x1;
-    x2.innerHTML = solution[0].x2;
-    target.innerHTML = solution[1];
+    let answer = `Ответ: X*(${solution[0].x1}, ${solution[0].x2}) = ${solution[1]}`;
+
+    answerEl.innerHTML = answer;
   }
 
