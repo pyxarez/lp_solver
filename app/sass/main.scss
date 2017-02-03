@@ -15,10 +15,6 @@ body {
 	max-width: 960px;
 }
 
-#runner, #preloader {
-	display: none;
-}
-
 .target {
 	margin-bottom: 15px;
 }
@@ -59,16 +55,23 @@ body {
 	font-family: "proxima-nova-soft", sans-serif;
 	font-weight: 600;
 	text-decoration: none;
-	// transition: box-shadow 200ms ease-out;
+	color: white;
 }
 
 .select, .btn, .input {
 	height: 35px;
 }
 
-.btn__green {
-	color: white;
-	background: #8FD14F; 
+.btn__blue {
+	background: rgb(49,133,252); 
+}
+
+.btn__red {
+	background: rgb(232,72,85);
+}
+
+.actions {
+	display: none;
 }
 
 #constraints {

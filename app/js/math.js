@@ -1,10 +1,10 @@
 /* 
  * Целевая функция
  */
-  let targetFunction = {
-    x1: null,
-    x2: null,
-    extreme: "max",
+let targetFunction = {
+  x1: null,
+  x2: null,
+  extreme: "max",
 
   /**
    * Метод для подсчёта значения целевой функции
@@ -13,7 +13,7 @@
    * @param {number} х2 значение х2.
    * @return {number} значение целевой функции при данных х1 и х2.
    */
-   calculate: function(x1, x2) {
+  calculate: function(x1, x2) {
     return this.x1 * x1 + this.x2 * x2; 
   },
 
@@ -187,7 +187,7 @@ function checkBelongingTo(con, x1, x2) {
  * @param {number} x2 координата проверяемой точки.
  * @return {bool} .
  */
- function isBellongingToAllEquations(eqs, x1, x2) {
+function isBellongingToAllEquations(eqs, x1, x2) {
   for (let h = 0; h < eqs.length; h++) {
 
     if ( !checkBelongingTo(eqs[h], x1, x2) ) {
@@ -206,7 +206,7 @@ function checkBelongingTo(con, x1, x2) {
  * @param {object} eqs массив ограничений нашей задачи.
  * @return {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
  */
- function fillBounds(eqs) {
+function fillBounds(eqs) {
   /* 
    * Объект, хранящий выражения и точки пересечения с другими объектами графика
    */
@@ -427,8 +427,10 @@ function getMaxCoord(graphs) {
     case (maxCoord > 33 && maxCoord <= 99):
       ratio = 5;
       break;
-    case (maxCoord > 500 && maxCoord <= 1000):
-      ratio = 0.4;
+    case (maxCoord >= 500 && maxCoord <= 1000):
+      // >= 500, чтобы можно было удобно отсеить фиктивные 
+      // без угрозы того, что отсеится точка прямой
+      ratio = 0.49;
      break;
     case (maxCoord > 1000 && maxCoord <= 2400):
       ratio = 0.2;
@@ -444,19 +446,19 @@ function getMaxCoord(graphs) {
  * @param {array} graphs линий для отрисовки.
  */
 function normaliseGraphs(graphs) {
-  const ratio = getRatio(graphs);
+  main.ratio = getRatio(graphs);
 
   for (var i = 0; i < graphs.length; i++) {    
 
     for (let key in graphs[i]) {
       if (key == "meta") {
-        graphs[i][key].value *= ratio;
+        graphs[i][key].value *= main.ratio;
       } else {
         let line = graphs[i][key];
         let largerCoord = line.x1 > line.x2 ? line.x1 : line.x2;
 
-        line.x1 *= ratio;
-        line.x2 *= ratio;        
+        line.x1 *= main.ratio;
+        line.x2 *= main.ratio;        
       }
     }
   }
@@ -508,8 +510,8 @@ function normaliseBounds(bounds, graphs) {
  * @param {string} direction направление целевой функции(max или min).
  */
  function showExtrem(points, direction) {
-  let extreme = getExtreme(points, direction);
-  showAnswer(extreme);
+  main.solution = getExtreme(points, direction);
+  showAnswer(main.solution);
 }
 
 /**
