@@ -73,9 +73,6 @@ function computeX2(con1, con2) {
   const number = con1.value - (con2.value * con1.x1 / con2.x1);
   const x2 = number * con2.x1 / (-con2.x2 * con1.x1 + con2.x1 * con1.x2); 
 
-  // return (Math.round(x2 * 1000) / 1000);
-  // return ~~x2;
-  // return Math.ceil(x2);
   return x2; 
 }
 
@@ -89,9 +86,6 @@ function computeX2(con1, con2) {
 function computeX1(con1, x2) {
   const x1 = (con1.value - con1.x2 * x2) / con1.x1; 
 
-  // return (Math.round(x1 * 1000) / 1000 );
-  // return ~~x1;
-  // return Math.ceil(x1);
   return x1; 
 }
 
@@ -108,9 +102,6 @@ function computeX1(con1, x2) {
 function computeX2ByX1(con1, x1) {
   const x2 =  (con1.value - con1.x1 * x1) / con1.x2;
 
-  // return (Math.round(x2 * 1000) / 1000 );
-  // return ~~x2;
-  // return Math.ceil(x2);
   return x2;
 }
 
@@ -171,9 +162,6 @@ function getX1AndX2(con1, con2) {
  * @return {bool} возращается результат проверки на принадлежность к ОДР для ограниченния.
  */
 function checkBelongingTo(con, x1, x2) {
-  // const computedValue = (Math.round((con.x1 * x1 + con.x2 * x2) * 1000) / 1000 );
-  // const computedValue = ~~(con.x1 * x1 + con.x2 * x2);
-  // const computedValue = Math.ceil(con.x1 * x1 + con.x2 * x2);
   const computedValue = +(con.x1 * x1 + con.x2 * x2).toFixed(2);
 
   const signs = {
@@ -298,15 +286,15 @@ function checkBelongingTo(con, x1, x2) {
   const eqBit = eq[1];
 
   for (let coords of eqBit) {
-    let isSame = true;
+    let isSame = false;
 
     points.forEach((point) => {
       if (point.x1 == coords[1].x1 && point.x2 == coords[1].x2) {
-        isSame = false;
+        isSame = true;
       }
     });
 
-    if (isSame) {
+    if (!isSame) {
       points.push(coords[1]);
 
       for (let bound of bounds) {
@@ -422,29 +410,29 @@ function checkBelongingTo(con, x1, x2) {
 
   switch (true) {
     case (maxCoord > 0 && maxCoord <= 0.5):
-    ratio = 600;
-    break;
+      ratio = 600;
+      break;
     case (maxCoord > 0.5 && maxCoord <= 1):
-    ratio = 400;
-    break;
+      ratio = 400;
+      break;
     case (maxCoord > 1 && maxCoord <= 4.5):
-    ratio = 100;
-    break;
+      ratio = 100;
+      break;
     case (maxCoord > 4.5 && maxCoord <= 10):
-    ratio = 45;
-    break;
+      ratio = 45;
+      break;
     case (maxCoord > 10 && maxCoord <= 33):
-    ratio = 15;
-    break;
+     ratio = 15;
+      break;
     case (maxCoord > 33 && maxCoord <= 99):
-    ratio = 5;
-    break;
+      ratio = 5;
+      break;
     case (maxCoord > 500 && maxCoord <= 1000):
-    ratio = 0.4;
-    break;
+      ratio = 0.4;
+     break;
     case (maxCoord > 1000 && maxCoord <= 2400):
-    ratio = 0.2;
-    break;
+      ratio = 0.2;
+      break;
   }
 
   return ratio;

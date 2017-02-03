@@ -125,6 +125,9 @@ function run() {
     const newPoints = getPoints(bounds);
 
     fillArea(newPoints);
+
+    // рисуем все точки пересечений
+    drawPoints(newPoints);
   } else {  
     if (targetFunction.extreme === "max") {   
       normaliseGraphs(graphs);
