@@ -366,7 +366,7 @@ function checkBelongingTo(con, x1, x2) {
  function getStarterGraphs(equations) {
   let graphs = [];
 
-  for (var i = 0; i < equations.length - 2; i++) {    
+  for (let i = 0; i < equations.length - 2; i++) {    
     let graph = new Graph(equations[i]);
     graphs.push(graph);
   }
@@ -375,15 +375,15 @@ function checkBelongingTo(con, x1, x2) {
 }
 
 /**
-  * Находим максимальное значения координат на графике по точкам линий
-  *
-  * @param {array} graphs массив линий, содержащих точки для отрисовки на графике.
-  * @return {number} max максимальное значение координат на графике.
-  */
-  function getMaxCoord(graphs) {
+ * Находим максимальное значения координат на графике по точкам линий
+ *
+ * @param {array} graphs массив линий, содержащих точки для отрисовки на графике.
+ * @return {number} max максимальное значение координат на графике.
+ */
+function getMaxCoord(graphs) {
     let max = 0;
 
-    for (var i = 0; i < graphs.length; i++) {    
+    for (let i = 0; i < graphs.length; i++) {    
 
       for (let key in graphs[i]) {
         let line = graphs[i][key];
@@ -441,10 +441,7 @@ function checkBelongingTo(con, x1, x2) {
 /**
  * Нормализуем линии ограничений
  *
- * @param {} .
- * @param {} .
- * @param {} .
- * @return {number} .
+ * @param {array} graphs линий для отрисовки.
  */
 function normaliseGraphs(graphs) {
   const ratio = getRatio(graphs);
