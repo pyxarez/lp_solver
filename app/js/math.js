@@ -166,13 +166,13 @@ function checkBelongingTo(con, x1, x2) {
 
   const signs = {
     "<=" : function(con, x1, x2) {
-      return computedValue <= con.value ? false : true;
+      return computedValue <= con.value ? true : false;
     },
     ">=" : function(con, x1, x2) {
-      return computedValue >= con.value ? false : true;
+      return computedValue >= con.value ? true : false;
     },
     "=" : function(con, x1, x2) {
-      return computedValue == con.value ? false : true;
+      return computedValue == con.value ? true : false;
     }
   }
 
@@ -190,12 +190,12 @@ function checkBelongingTo(con, x1, x2) {
  function isBellongingToAllEquations(eqs, x1, x2) {
   for (let h = 0; h < eqs.length; h++) {
 
-    if ( checkBelongingTo(eqs[h], x1, x2) ) {
-      return true;
+    if ( !checkBelongingTo(eqs[h], x1, x2) ) {
+      return false;
     }
   }
 
-  return false;
+  return true;
 }
 
 /**
@@ -219,7 +219,7 @@ function checkBelongingTo(con, x1, x2) {
 
       const [x1, x2] = getX1AndX2(eqs[i], eqs[j]);
 
-      if ( isBellongingToAllEquations(eqs, x1, x2) ) continue;
+      if ( !isBellongingToAllEquations(eqs, x1, x2) ) continue;
 
       if ( !bounds.has(eqs[i]) ) {
         bounds.set(eqs[i], new Map());
