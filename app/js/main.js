@@ -158,17 +158,12 @@ function run() {
     }
   }
 
-    // рисуем прямые, используя массив объектов Graph
-    for (let i = 0; i < graphs.length; i++) {
-      drawLine(graphs[i]);
-    }
-
-    // линия уровня
-    drawLevelLine();
-
-    // вектор нормали
-    drawVector(targetFunction.x1, targetFunction.x2);
-
+  for (let i = 0; i < graphs.length; i++) {
+    drawLine(graphs[i]);
+  }
+  
+  drawLevelLine();
+  drawVector(targetFunction.x1, targetFunction.x2);
   } else {
     alert('Заполните все поля');
   }

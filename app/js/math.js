@@ -1,6 +1,6 @@
 /* 
-  * Целевая функция
-  */
+ * Целевая функция
+ */
   let targetFunction = {
     x1: null,
     x2: null,
@@ -240,8 +240,8 @@ function checkBelongingTo(con, x1, x2) {
  *
  * @param {array} equations уравнения ограничений(всех).
  * @return {boolean}
-   */
- function checkInfinite(equations) {
+ */
+function checkInfinite(equations) {
   for (var i = 0; i < equations.length; i++) {
     if (equations[i].sign === "<=" || equations[i].sign === "=") {
       return false;
@@ -257,7 +257,7 @@ function checkBelongingTo(con, x1, x2) {
  * @param {Map} bounds все точки пересечения, на ОДР.
  * @return {array} points все точки для закрашивания ОДР, выстроеннных в правильном порядке.
  */
- function getPoints(bounds) {
+function getPoints(bounds) {
   if (isEmptyMap(bounds)) {
     return [];     
   }
