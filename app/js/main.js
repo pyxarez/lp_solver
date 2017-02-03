@@ -170,26 +170,26 @@ function run() {
 
   // чтобы не обновлялась страница
   // e.preventDefault();
-}
+} 
 
 /**
-  * Проверяет введены ли все input
-  */
-  function checkData() {
-    let inputs = document.querySelectorAll('input:not([type="submit"])');
-    for (let i = 0; i < inputs.length; i++) {
-      if (!inputs[i].value)
-        return false;
-    }
-
-    return inputs;
+ * Проверяет введены ли все input
+ */
+function checkData() {
+  let inputs = document.querySelectorAll('input:not([type="submit"])');
+  for (let i = 0; i < inputs.length; i++) {
+    if (!inputs[i].value)
+      return false;
   }
 
-  /* массив решения */
-  function showAnswer(solution) {
-    let answerEl = document.querySelector('.answer');
+  return inputs;
+}
 
-    let answer = `Ответ: X*(${solution[0].x1}, ${solution[0].x2}) = ${solution[1]}`;
-    answerEl.innerHTML = answer;
-  }
+/* массив решения */
+function showAnswer(solution) {
+  let answerEl = document.querySelector('.answer');
+
+  let answer = `Ответ: X*(${solution[0].x1}, ${solution[0].x2}) = ${solution[1]}`;
+  answerEl.innerHTML = answer;
+}
 

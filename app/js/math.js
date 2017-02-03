@@ -1,10 +1,10 @@
 /* 
  * Целевая функция
  */
-  let targetFunction = {
-    x1: null,
-    x2: null,
-    extreme: "max",
+let targetFunction = {
+  x1: null,
+  x2: null,
+  extreme: "max",
 
   /**
    * Метод для подсчёта значения целевой функции
@@ -13,7 +13,7 @@
    * @param {number} х2 значение х2.
    * @return {number} значение целевой функции при данных х1 и х2.
    */
-   calculate: function(x1, x2) {
+  calculate: function(x1, x2) {
     return this.x1 * x1 + this.x2 * x2; 
   },
 
@@ -187,7 +187,7 @@ function checkBelongingTo(con, x1, x2) {
  * @param {number} x2 координата проверяемой точки.
  * @return {bool} .
  */
- function isBellongingToAllEquations(eqs, x1, x2) {
+function isBellongingToAllEquations(eqs, x1, x2) {
   for (let h = 0; h < eqs.length; h++) {
 
     if ( !checkBelongingTo(eqs[h], x1, x2) ) {
@@ -206,7 +206,7 @@ function checkBelongingTo(con, x1, x2) {
  * @param {object} eqs массив ограничений нашей задачи.
  * @return {Map} bounds Map ограничений и их пересечений, удовлетворящих ОДР.
  */
- function fillBounds(eqs) {
+function fillBounds(eqs) {
   /* 
    * Объект, хранящий выражения и точки пересечения с другими объектами графика
    */
