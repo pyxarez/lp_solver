@@ -79,7 +79,7 @@ function fillArea(points) {
 	*/
 function drawPoints(points) {
 	ctx.fillStyle = 'rgb(251, 54, 64)';
-
+	
 	points.forEach((point) => {
 
 		ctx.beginPath();
