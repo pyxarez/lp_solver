@@ -29,7 +29,7 @@ function getReverse(y) {
 	* каждая точка -- объект с двумя координатами 
 	*/
 function drawLine(line) {
-	ctx.strokeStyle = 'rgba(39, 31, 122, .75)';
+	ctx.strokeStyle = 'rgb(192, 74, 188)';
 	let point1 = line.point1;
 	let point2 = line.point2;
 	ctx.beginPath();
@@ -59,10 +59,10 @@ function drawLevelLine() {
 
 /**
 	* Закрашивает область ОДР (если она не пустое множество)
-	* @param {array} x координата точки по оси x 
+	* @param {array} points -- массив объектов с двумя координатами точки
 	*/
 function fillArea(points) {
-	ctx.fillStyle = 'rgba(225, 165, 0, .5)';
+	ctx.fillStyle = 'rgb(254, 187, 22)';
 
 	ctx.moveTo(points[0].x1, getReverse(points[0].x2));
 
@@ -71,4 +71,19 @@ function fillArea(points) {
 	}
 
 	ctx.fill();
+}
+
+/**
+	* Рисует все точки пересечений удовлетворюящих ОДР
+	* @param {array} points -- массив объектов с двумя координатами точки
+	*/
+function drawPoints(points) {
+	ctx.fillStyle = 'rgb(251, 54, 64)';
+	
+	points.forEach((point) => {
+
+		ctx.beginPath();
+		ctx.arc(point.x1, getReverse(point.x2), 3, 0, Math.PI * 2); 
+		ctx.fill();
+	});
 }

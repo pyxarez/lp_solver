@@ -125,6 +125,9 @@ function run() {
     const newPoints = getPoints(bounds);
 
     fillArea(newPoints);
+
+    // рисуем все точки пересечений
+    drawPoints(newPoints);
   } else {  
     if (targetFunction.extreme === "max") {   
       normaliseGraphs(graphs);
@@ -135,7 +138,10 @@ function run() {
       //точки для построения ОДР
       const newPoints = getPoints(newBounds);
       fillArea(newPoints);       
-      alert("Максимальное значение ОДР не существует, ввиду её неограниченности");  
+      alert("Максимальное значение ОДР не существует, ввиду её неограниченности"); 
+      
+      // рисуем все точки пересечений
+      drawPoints(newPoints); 
     } else {
       showExtrem(points, targetFunction.extreme);
       normaliseGraphs(graphs);
@@ -145,7 +151,10 @@ function run() {
 
       //точки для построения ОДР
       const newPoints = getPoints(newBounds);
-      fillArea(newPoints);              
+      fillArea(newPoints);
+
+      // рисуем все точки пересечений
+      drawPoints(newPoints);              
     }
   }
 
