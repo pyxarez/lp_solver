@@ -1,16 +1,14 @@
-/**
-	* Графическая часть
-*/
+/* Здесь будет модуль (скоро, но не сегодня) */
 
-let graph = document.getElementById('graph');
+const graph = document.getElementById('graph');
 
 // working area (canvas)
-let ctx = graph.getContext('2d');
+const ctx = graph.getContext('2d');
 
 /**
 	* Объект с размерами canvas
 */
-let range = {
+const range = {
 	x: graph.clientHeight,
 	y: graph.clientWidth
 };
@@ -26,10 +24,11 @@ function getReverse(y) {
 /**
 	* Отрисовывает линию
 	* @param {object} line Объект с двумя точками
+	* @param {string} color строка представляющая цвет линии (по умолчанию синий) 
 	* каждая точка -- объект с двумя координатами 
 	*/
-function drawLine(line) {
-	ctx.strokeStyle = 'rgb(192, 74, 188)';
+function drawLine(line, color = 'darkblue') {
+	ctx.strokeStyle = color;
 	let point1 = line.point1;
 	let point2 = line.point2;
 	ctx.beginPath();
@@ -39,22 +38,62 @@ function drawLine(line) {
 }
 
 /**
-	* Отрисовывает вектор нормали (из точки 0, 0)
+	* Нормализует вектор нормали (приводит к шастабу графика)
 	* @param {number} x координата точки по оси x 
 	* @param {number} y координата точки по оси y 
 	*/
+function normaliseVector(x, y) {
+	if (x < 20 && y < 20) {
+		x *= 10;
+		y *= 10; 
+	}
+
+	return [x, y];
+}
+
+/**
+	* Отрисовывает вектор нормали (из точки 0, 0)
+	* @param {number} x координата точки по оси x 
+	* @param {number} y координата точки по оси y 
+	* ! простыня кода
+	*/
 function drawVector(x, y) {
+	const[nx, ny] = normaliseVector(x, y);
+
+	const STROKE_COLOR = 'rgb(255, 60, 56)'; 
+
+	ctx.strokeStyle = STROKE_COLOR;
+	ctx.fillStyle = STROKE_COLOR;
+
 	ctx.beginPath();
 	ctx.moveTo(0, range.y);
-	ctx.lineTo(x, range.y - y);
+	ctx.lineTo(nx, range.y - ny);
 	ctx.stroke();
+
+	ctx.beginPath();
+	ctx.moveTo(nx, getReverse(ny));
+	ctx.lineTo(nx - 10, getReverse(ny - 10));
+	ctx.stroke();
+	ctx.moveTo(nx, getReverse(ny))
+	ctx.lineTo(nx, getReverse(ny - 15));
+	ctx.stroke();
+
 }	
 
-function drawLevelLine() {
-	let equation = new Equation(targetFunction.x1, targetFunction.x2, '=', targetFunction.x1 * targetFunction.x2);
+/**
+	* Отрисовывает линию уровня после нахождения решения задачи
+  * @param {array} solution массив с x1,x2 и значением целевой функции 
+	* @param {object} targetFunction объект целевой функции 
+	*/
+function drawSupportLine(solution, targetFunction) {
+	const value = solution[1];
+
+	const equation = new Equation(targetFunction.x1, targetFunction.x2, '=', value);
 	let graph = new Graph(equation);
 
-	drawLine(graph);
+	normaliseGraphs([graph]);
+
+	drawLine(graph, 'red');
 }
 
 /**
@@ -80,10 +119,28 @@ function fillArea(points) {
 function drawPoints(points) {
 	ctx.fillStyle = 'rgb(251, 54, 64)';
 	
-	points.forEach((point) => {
+	points
+		.filter(siftPoints)
+		.forEach((point) => {
 
 		ctx.beginPath();
 		ctx.arc(point.x1, getReverse(point.x2), 3, 0, Math.PI * 2); 
 		ctx.fill();
 	});
+}
+
+/**
+	* Отсеивает точки пересечения с фиктивными осями
+	* @param {object} point -- объект с двумя координатами точки
+	* ! переместить в другой модуль (т.к. напрямую не касается отрисовки)
+	*/
+function siftPoints(point) {
+	if (point.x1 == 0 && point.x2 == 500 ||
+			point.x1 == 500 && point.x2 == 500 ||
+			point.x1 == 500 && point.x2 == 0) {
+
+		return false;
+	}
+
+	return true;
 }
