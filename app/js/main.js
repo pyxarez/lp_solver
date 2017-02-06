@@ -28,7 +28,7 @@ const mainHTML = document.querySelector('main');
   */
 const main = {
   constraints: 2,
-  ratio: 1,
+  ratio: null,
   solution: [{x1: null, x2: null}, null]
 };
 

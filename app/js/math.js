@@ -433,39 +433,41 @@ function getMaxCoord(graphs) {
  * @return {number} ratio коэффицент умножения.
  */
  function getRatio(graphs) {
-  let maxCoord = getMaxCoord(graphs),
-  ratio = 1;
+  let maxCoord = getMaxCoord(graphs);
 
-  switch (true) {
-    case (maxCoord > 0 && maxCoord <= 0.5):
+  if (main.ratio) return main.ratio;
+  else { 
+    switch (true) {
+      case (maxCoord > 0 && maxCoord <= 0.5):
       ratio = 600;
       break;
-    case (maxCoord > 0.5 && maxCoord <= 1):
+      case (maxCoord > 0.5 && maxCoord <= 1):
       ratio = 400;
       break;
-    case (maxCoord > 1 && maxCoord <= 4.5):
+      case (maxCoord > 1 && maxCoord <= 4.5):
       ratio = 100;
       break;
-    case (maxCoord > 4.5 && maxCoord <= 10):
+      case (maxCoord > 4.5 && maxCoord <= 10):
       ratio = 45;
       break;
-    case (maxCoord > 10 && maxCoord <= 33):
-     ratio = 15;
+      case (maxCoord > 10 && maxCoord <= 33):
+      ratio = 15;
       break;
-    case (maxCoord > 33 && maxCoord <= 99):
+      case (maxCoord > 33 && maxCoord <= 99):
       ratio = 5;
       break;
-    case (maxCoord >= 500 && maxCoord <= 1000):
+      case (maxCoord >= 500 && maxCoord <= 1000):
       // >= 500, чтобы можно было удобно отсеить фиктивные 
       // без угрозы того, что отсеится точка прямой
       ratio = 0.49;
-     break;
-    case (maxCoord > 1000 && maxCoord <= 2400):
+      break;
+      case (maxCoord > 1000 && maxCoord <= 2400):
       ratio = 0.2;
       break;
-  }
+    }
 
-  return ratio;
+    return ratio;
+  }
 }
 
 /**
