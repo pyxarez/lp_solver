@@ -1,6 +1,6 @@
-/*
-  * Кнопка подготовки и запуска просчетов
-  */
+/**
+ * Кнопка подготовки и запуска просчетов
+ */
 const preparator = document.getElementById('preparator'),
     runner = document.getElementById('runner'),
     controlButtonsContainer = document.querySelector('.actions'),
@@ -28,7 +28,7 @@ const mainHTML = document.querySelector('main');
   */
 const main = {
   constraints: 2,
-  ratio: 1,
+  ratio: null,
   solution: [{x1: null, x2: null}, null]
 };
 
@@ -201,7 +201,7 @@ function showAnswer(solution) {
   const answerEl = document.querySelector('.answer');
 
   if (solution) {
-    const answer = `Ответ: X*(${solution[0].x1}, ${solution[0].x2}) = ${solution[1]}`;
+    const answer = `Ответ: X*(${(solution[0].x1).toFixed(3)}, ${(solution[0].x2).toFixed(3)}) = ${solution[1]}`;
     
     answerEl.innerHTML = answer;
   } else {
