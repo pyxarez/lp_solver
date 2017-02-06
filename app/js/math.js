@@ -1,7 +1,7 @@
 /* 
  * Целевая функция
  */
-let targetFunction = {
+const targetFunction = {
   x1: null,
   x2: null,
   extreme: "max",
@@ -13,11 +13,11 @@ let targetFunction = {
    * @param {number} х2 значение х2.
    * @return {number} значение целевой функции при данных х1 и х2.
    */
-  calculate: function(x1, x2) {
+  computeValue(x1, x2) {
     return this.x1 * x1 + this.x2 * x2; 
   },
 
-  init: function(x1, x2, extreme) {
+  init(x1, x2, extreme) {
     this.x1 = x1;
     this.x2 = x2;
     this.extreme = extreme;
@@ -30,6 +30,10 @@ class Equation {
     this.x2 = x2;
     this.sign = sign;
     this.value = value;
+  }
+
+  computeValue(x1, x2) {
+    return this.x1 * x1 + this.x2 * x2;
   }
 }
 
@@ -50,8 +54,7 @@ class Graph {
   }
 }
 
-// создает новые ограничения на основе нормализованных прямых 
-class reverseEquation {
+class ReversedEquation {
   constructor(graph) {
     this.x1 = graph.meta.value / graph.point1.x1;
     this.x2 = graph.meta.value / graph.point2.x2;
@@ -106,6 +109,39 @@ function computeX2ByX1(con1, x1) {
 }
 
 /**
+ * Свапаем два аргумента
+ *
+ * @param {anytype} Любой аргумент.
+ * @param {anytype} Любой аргумент.
+ * @return {array} .
+ */
+function swapArguments(first, second) {
+    let temp = first;
+    first = second;
+    second = temp;
+
+    return [first, second];
+}
+
+/**
+ * Проверяем, является ли первый аргумент осью
+ *
+ * @param {object} con1 ограничение 1.
+ * @param {object} con2 ограничение 2.
+ * @return {boolean}.
+ */
+function isAxis(con) {
+  if (con.x1 == 1 && con.value == 0 ||
+      con.x2 == 1 && con.value == 0 ||
+      con.x1 == 1 && con.value == 500 ||
+      con.x2 == 1 && con.value == 500) 
+  {
+    return true;
+  } 
+  return false;
+}
+
+/**
  * Функция вычисления х1 и х2, решает какой тип системы уравнений(пряма и ось, прямая и прямая) и выполняет соответсвующие дествие
  * 
  * Первый условный оператор - если второй аргумент ось(х1 == 0 или х1 == 500).
@@ -117,21 +153,13 @@ function computeX2ByX1(con1, x1) {
  * @return {array} значения х1 и х2 при заданных ограничениях.
  */
 function getX1AndX2(con1, con2) {
-  const values = [];
   let x1, x2;
-
-  // Если первый аргумент ограничение оси, то меняем его со вторым аргументом,
+  
   // удобно для для того, чтобы не менять
   // логику счёта х1 и х2(i.e. второй аргумент всегда ось теперь, кроме случаев, когда
   // пришло 2 ограничения обычных(не осей)) 
-  if (con1.x1 == 1 && con1.value == 0 ||
-      con1.x2 == 1 && con1.value == 0 ||
-      con1.x1 == 1 && con1.value == 500 ||
-      con1.x2 == 1 && con1.value == 500) 
-  {
-    let temp = con1;
-    con1 = con2;
-    con2 = temp;
+  if (isAxis(con1)) {
+    [con1, con2] = swapArguments(con1, con2);    
   }
 
   if (con2.x1 == 1 && con2.value == 0 || con2.x1 == 1 && con2.value == 500) {
@@ -145,10 +173,22 @@ function getX1AndX2(con1, con2) {
     x1 = computeX1(con1, x2);
   }
 
-  values.push(x1);
-  values.push(x2);
+  return [x1, x2];
+}
 
-  return values;
+/**
+ * Сравнивает значение, полученное при подстановке х1 и х2 в уравнение и 
+ * ограничение уравнения(число после знака равно)
+ *
+ * @param {number} computedValue значение при подстановке х1 и х2 в уравнение.
+ * @param {Equation} equation ограничение задачи.
+ * @return {bolean} резуальтат сравнения.
+ */
+function compareValues(computedValue, equation) {
+  const sign = equation.sign,
+    value = equation.value;
+
+  return eval(`${computedValue} ${sign} ${value}`);
 }
 
 /**
@@ -156,41 +196,29 @@ function getX1AndX2(con1, con2) {
  * Подставляет х1 и х2 в уравнение ограничения и смотрить удовлетворяется
  * ли условие ограничения
  *
- * @param {object} con ограничение(выражение).
+ * @param {object} eq ограничение(выражение).
  * @param {number} x1 значение х1 для ограничения.
  * @param {number} х2 значение х2 для ограничение.
  * @return {bool} возращается результат проверки на принадлежность к ОДР для ограниченния.
  */
-function checkBelongingTo(con, x1, x2) {
-  const computedValue = +(con.x1 * x1 + con.x2 * x2).toFixed(2);
+function isBelongToEquation(eq, x1, x2) {
+  const computedValue = +(eq.computeValue(x1, x2)).toFixed(2);
 
-  const signs = {
-    "<=" : function(con, x1, x2) {
-      return computedValue <= con.value ? true : false;
-    },
-    ">=" : function(con, x1, x2) {
-      return computedValue >= con.value ? true : false;
-    },
-    "=" : function(con, x1, x2) {
-      return computedValue == con.value ? true : false;
-    }
-  }
-
-  return signs[con.sign](con, x1, x2);
+  return compareValues(computedValue, eq);
 }
 
 /**
  * Проверяет соответствие точки с координатами (х1, х2) всем ограничениям
  *
- * @param {array} eqs массив ограничений для нашей задачи.
+ * @param {array} eqs(equations) массив ограничений для нашей задачи.
  * @param {number} x1 координата проверяемой точки.
  * @param {number} x2 координата проверяемой точки.
  * @return {bool} .
  */
 function isBellongingToAllEquations(eqs, x1, x2) {
-  for (let h = 0; h < eqs.length; h++) {
+  for (let i = 0; i < eqs.length; i++) {
 
-    if ( !checkBelongingTo(eqs[h], x1, x2) ) {
+    if ( !isBelongToEquation(eqs[i], x1, x2) ) {
       return false;
     }
   }
@@ -210,7 +238,7 @@ function fillBounds(eqs) {
   /* 
    * Объект, хранящий выражения и точки пересечения с другими объектами графика
    */
-  let bounds = new Map();
+  const bounds = new Map();
 
   for (let i = 0, l = eqs.length; i < l; i++) {    
 
@@ -318,7 +346,7 @@ function getPoints(bounds) {
   let valuesForPoint = new Map();
 
   points.forEach((point) => {
-    let value = targetFunction.calculate(point.x1, point.x2);
+    let value = targetFunction.computeValue(point.x1, point.x2);
 
     valuesForPoint.set(point, value);
   });
@@ -540,7 +568,7 @@ function getNewEquations(graphs) {
   let equations = [];
 
   for (var i = 0; i < graphs.length; i++) {
-    equations.push(new reverseEquation(graphs[i]));
+    equations.push(new ReversedEquation(graphs[i]));
   }
 
   return equations;
