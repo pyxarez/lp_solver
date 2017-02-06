@@ -4,7 +4,7 @@
  */
 const tester = (function() {
   const button = document.getElementById('preparator'),
-    select = document.getElementsByClassName('select'),
+    select = document.getElementById("con_amount"),
     inputs = document.getElementsByClassName('input');
 
   const configs = {
