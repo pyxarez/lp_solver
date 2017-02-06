@@ -13,7 +13,7 @@ const targetFunction = {
    * @param {number} х2 значение х2.
    * @return {number} значение целевой функции при данных х1 и х2.
    */
-  calculateValue(x1, x2) {
+  computeValue(x1, x2) {
     return this.x1 * x1 + this.x2 * x2; 
   },
 
@@ -54,7 +54,6 @@ class Graph {
   }
 }
 
-// создает новые ограничения на основе нормализованной прямой 
 class ReversedEquation {
   constructor(graph) {
     this.x1 = graph.meta.value / graph.point1.x1;
@@ -176,6 +175,15 @@ function getX1AndX2(con1, con2) {
 
   return [x1, x2];
 }
+
+/**
+ * Каррируем пачкой функций для сравнения
+ *
+ * @param {} .
+ * @param {} .
+ * @param {} .
+ * @return {number} .
+ */
 
 /**
  * Сравнивает значение, полученное при подстановке х1 и х2 в уравнение и 
@@ -347,7 +355,7 @@ function getPoints(bounds) {
   let valuesForPoint = new Map();
 
   points.forEach((point) => {
-    let value = targetFunction.calculateValue(point.x1, point.x2);
+    let value = targetFunction.computeValue(point.x1, point.x2);
 
     valuesForPoint.set(point, value);
   });
