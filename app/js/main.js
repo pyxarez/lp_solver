@@ -1,6 +1,6 @@
-/*
-  * Кнопка подготовки и запуска просчетов
-  */
+/**
+ * Кнопка подготовки и запуска просчетов
+ */
 const preparator = document.getElementById('preparator'),
     runner = document.getElementById('runner'),
     controlButtonsContainer = document.querySelector('.actions'),

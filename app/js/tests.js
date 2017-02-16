@@ -1,7 +1,3 @@
-/**
- * Передаём 1 и программа запускается с Мишкиными данными, 2 с Сашкиными
- *
- */
 const tester = (function() {
   const button = document.getElementById('preparator'),
     select = document.getElementById("con_amount"),

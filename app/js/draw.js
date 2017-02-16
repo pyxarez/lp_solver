@@ -1,5 +1,4 @@
 /* Здесь будет модуль (скоро, но не сегодня) */
-
 const graph = document.getElementById('graph');
 
 // working area (canvas)

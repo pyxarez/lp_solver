@@ -1,4 +1,4 @@
-/* 
+/** 
  * Целевая функция
  */
 const targetFunction = {
