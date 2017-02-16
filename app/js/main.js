@@ -116,12 +116,16 @@ function run() {
       normaliseBounds(bounds, graphs);     
       normaliseGraphs(graphs);
       alert("ОДР представляет собой единственную точку");
+
+      drawPoints(points);
     } else if (points.length == 2) {
       showExtrem(points, targetFunction.extreme);
 
       normaliseBounds(bounds, graphs);     
       normaliseGraphs(graphs);
       alert("ОДР представляет собой линию(2 точки на графике)");
+
+      drawPoints(points);
     } else if (!checkInfinite(equations)) {
       showExtrem(points, targetFunction.extreme); 
 
