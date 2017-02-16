@@ -28,8 +28,12 @@ class Equation {
   constructor(x1, x2, sign, value) {
     this.x1 = x1;
     this.x2 = x2;
-    this.sign = sign;
+    this.sign = this.setSign(sign);
     this.value = value;
+  }
+
+  setSign(sign) {
+    return sign == "=" ? "==" : sign;
   }
 
   computeValue(x1, x2) {
@@ -184,10 +188,7 @@ function getX1AndX2(con1, con2) {
  * @param {Equation} equation ограничение задачи.
  * @return {bolean} резуальтат сравнения.
  */
-function compareValues(computedValue, equation) {
-  const sign = equation.sign,
-    value = equation.value;
-
+function compareValues(computedValue, {sign, value}) {
   return eval(`${computedValue} ${sign} ${value}`);
 }
 
